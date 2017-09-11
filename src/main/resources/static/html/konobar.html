@@ -1,0 +1,318 @@
+<div ng-cloak ng-controller="konobarCtrl">
+	<div>
+		<h1>Konobar:  {{ulogovanKonobar.ime}} </h1>
+		<a ng-click="logOut()" href="">Izloguj se</a>
+	</div>
+
+	<div>
+		<div>
+			<div id="tabs">
+				<ul>
+					<li ng-class="{active: isSet(0)}"><a ng-click="setTab(0)" href=""><span>Raspored rada</span></a></li>
+					<li ng-class="{active: isSet(1)}"><a ng-click="setTab(1)" href=""><span>Raspored stolova</span></a></li>
+					<li ng-class="{active: isSet(2)}"><a ng-click="setTab(2)" href=""><span>Porudzbine</span></a></li>
+					<li ng-class="{active: isSet(3)}"><a ng-click="setTab(3)" href=""><span>Izmeni podatke</span></a></li>
+					<li ng-class="{active: isSet(4)}"><a ng-click="setTab(4)" href=""><span>Promeni lozinku</span></a></li>
+				</ul>
+			</div>
+			<div ng-show="isSet(0)">
+				<h2>Raspored rada</h2>
+				<table>
+					<tr>
+						<td>
+							Odaberi konobara:
+						</td>
+						<td>
+							<select ng-model = "selektovaniKonobar" ng-options = "x.ime for x in konobariRestorana" ng-change = "promenjenKonobar()"></select>
+						</td>
+						
+					</tr>
+				</table>
+				<table ng-show = "selektovaniKonobar != null" >
+					<tr>
+						<th style = "width:70px">Dan</th>
+						<th style = "width:90px">Datum</th>
+						<th>Smena</th>
+						<th></th>
+					</tr>
+					<tr>
+						<td>Ponedeljak</td>
+						<td>{{datumPonedeljakStr}}</td>
+						<td ng-show = "ponedeljakKonobara != null">{{ponedeljakKonobara.vremeod}} - {{ponedeljakKonobara.vremedo}} </td>
+						<td ng-show = "ponedeljakKonobara == null">Ne radi</td>
+						<td ng-show = "danasnjiDan == 1">*<td>
+					</tr>
+					<tr>
+						<td>Utorak</td>
+						<td>{{datumUtorakStr}}</td>
+						<td ng-show = "utorakKonobara != null">{{utorakKonobara.vremeod}} - {{utorakKonobara.vremedo}} </td>
+						<td ng-show = "utorakKonobara == null">Ne radi</td>
+						<td ng-show = "danasnjiDan == 2">*<td>
+					</tr>
+					<tr>
+						<td>Sreda</td>
+						<td>{{datumSredaStr}}</td>
+						<td ng-show = "sredaKonobara != null">{{sredaKonobara.vremeod}} - {{sredaKonobara.vremedo}} </td>
+						<td ng-show = "sredaKonobara == null">Ne radi</td>
+						<td ng-show = "danasnjiDan == 3">*<td>
+					</tr>
+					<tr>
+						<td>Cetvrtak</td>
+						<td>{{datumCetvrtakStr}}</td>
+						<td ng-show = "cetvrtakKonobara != null">{{cetvrtakKonobara.vremeod}} - {{cetvrtakKonobara.vremedo}} </td>
+						<td ng-show = "cetvrtakKonobara == null">Ne radi</td>
+						<td ng-show = "danasnjiDan == 4">*<td>
+					</tr>
+					<tr>
+						<td>Petak</td>
+						<td>{{datumPetakStr}}</td>
+						<td ng-show = "petakKonobara != null">{{petakKonobara.vremeod}} - {{petakKonobara.vremedo}} </td>
+						<td ng-show = "petakKonobara == null">Ne radi</td>
+						<td ng-show = "danasnjiDan == 5">*<td>
+					</tr>
+					<tr>
+						<td>Subota</td>
+						<td>{{datumSubotaStr}}</td>
+						<td ng-show = "subotaKonobara != null">{{subotaKonobara.vremeod}} - {{subotaKonobara.vremedo}} </td>
+						<td ng-show = "subotaKonobara == null">Ne radi</td>
+						<td ng-show = "danasnjiDan == 6">*<td>
+					</tr>
+					<tr>
+						<td>Nedelja</td>
+						<td>{{datumNedeljaStr}}</td>
+						<td ng-show = "nedeljaKonobara != null">{{nedeljaKonobara.vremeod}} - {{nedeljaKonobara.vremedo}} </td>
+						<td ng-show = "nedeljaKonobara == null">Ne radi</td>
+						<td ng-show = "danasnjiDan == 0">*<td>
+					</tr>
+				</table>
+			</div>
+
+
+			<div ng-show="isSet(1)">
+				<div>
+					<h2>Raspored stolova:</h2>
+					<table>
+						<tr ng-repeat="n1 in brRedova">
+							<td style = "width:60px; heigth: 90px" ng-repeat="n2 in brKolona">
+								<div ng-show="obojiSto('jeSto', n1*brojKolona+n2)" style="background-color:red" style = "width:50px; heigth: 50px" ng-click="prikaziInformacije(n1*brojKolona+n2, restoran)">{{n1}}-{{n2}}</div>
+								<div ng-show="obojiSto('nijeSto', n1*brojKolona+n2)" style="background-color:white" style = "width:50px" ng-click="prikaziInformacije(n1*brojKolona+n2, restoran)">{{n1}}-{{n2}}</div>
+								<div ng-show="obojiSto('mojSto', n1*brojKolona+n2)" style="background-color:yellow" style = "width:50px" ng-click="prikaziInformacije(n1*brojKolona+n2, restoran)">{{n1}}-{{n2}}</div>
+							</td>
+						</tr>
+					</table>
+				</div>
+			</div>
+
+			<div ng-show="isSet(2)">
+				<h2>Porudzbine</h2>
+				<div>
+					<h3 ng-show = "izmena == false">Nova porudzbina</h3>
+					<h3 ng-show = "izmena == true">Izmeni porudzbinu</h3>
+					<h3 ng-show = "!smeDaDodaJela && !smeDaDodaPica">Ne mozete izmeniti ovu porudzbinu</h3>
+					<div>
+						<table>
+							<tr ng-show = "smeDaDodaJela === true">
+								<td>Odaberite jelo</td>
+								<td><select ng-model="jelo" ng-options="x.naziv for x in jela"></select></td>
+								<td><button ng-click="dodajJelo(jelo)">Dodaj jelo</button></td>
+							<tr>
+						</table>
+					</div>
+					<div>						
+						<table>
+							<tr ng-show = "smeDaDodaPica == true">
+								<td>Odaberite pice</td>
+								<td><select ng-model="pice" ng-options="x.naziv for x in pica"></select></td>
+								<td><button ng-click="dodajPice(pice)">Dodaj pice</button></td>
+							<tr>
+						</table>
+					</div>
+					<hr/>
+					<div ng-show = "dodataPica.length != 0 || dodataJela.length != 0">
+						<h3>Porudzbina</h3>
+						<div ng-show = "dodataPica.length != 0" >
+							<h4>Spisak pica</h4>
+							<table>
+								<tr ng-repeat="x in dodataPica">
+							    	<td>{{ x.pic.naziv }}</td>
+							    	<td><a href = "" ng-click = "obrisiPice(x)" >obrisi</a></td>
+							  	</tr>
+							</table>
+						</div>
+						<div ng-show = "dodataJela.length != 0">
+							<h4>Spisak jela</h4>
+							<table>
+								<tr ng-repeat = "x in dodataJela">
+							    	<td>{{ x.jel.naziv }}</td>
+							    	<td><a href = "" ng-click = "obrisiJelo(x)" >obrisi</a></td>
+							  	</tr>
+							</table>
+						</div>							
+						<div ng-show = "izmena != true">
+							<table>
+								<tr>
+									<td>Odaberite sto</td>
+									<td><select ng-model="sto" ng-options="x.oznaka for x in stolovi"></select></td>
+								</tr>
+							</table>
+						</div>
+						<button ng-show = "izmena != true" ng-click="dodajPorudzbinu()">Dodaj novu porudzbinu</button>
+					</div>
+					<table >
+						<tr>
+							<td ng-show = "smeDaDodaJela || smeDaDodaPica"><button ng-show = "izmena == true" ng-click="dodajPorudzbinuIzmena()">Potvrdi izmene</button><td>
+							<td><button ng-show = "izmena == true" ng-click="vratiNaDodavanje()">Dodaj novu porudzbinu</button><td>
+						</tr>
+					</table>
+				</div>
+
+				<div>
+					<div ng-show = "porudzbine.length != 0">
+					<hr ng-show = "smeDaDodaJela || smeDaDodaPica"/>
+					<h2>Lista porudzbina</h2>
+						<table ng-show = "item.porudzbinaPrihvacena" ng-repeat = "item in porudzbine">
+							<tr >
+								<td style = "width:260px">Vreme : {{item.vremePrimanja}}</td>
+								<td style = "width:180px">Oznaka stola : {{item.sto.oznaka}}</td>
+								<td>
+									<button ng-click = "kliknuoNaDetalji(item)">Detalji</button>
+								</td>
+								<td>
+									<button ng-click = "izmeni(item)">Izmeni</button>
+								</td>
+								<td ng-show = "item.spremnaPica && item.spremnaJela">
+									<button ng-click = "zavrsi(item)">Prikazi racun</button>
+								</td>
+								<td ng-show = "item.spremnaPica && item.spremnaJela">
+									<img src="../images/spremna.png" height="20" width="20">
+								</td>
+							</tr>
+							<tr  ng-show = "show == item.id" ng-repeat = "item1 in picaKliknutePorudzbine">
+								<td>{{item1.pice.naziv}}</td>
+								<td>{{item1.kolicina}}</td>
+							</tr>
+							<tr  ng-show = "show == item.id" ng-repeat = "item1 in jelaKliknutePorudzbine">
+								<td>{{item1.jelo.naziv}}</td>
+								<td>{{item1.kolicina}}</td>
+							</tr>
+							
+							<tr ng-show = "racun == item.id">
+								<td>Naziv</td>
+								<td>Kolicina</td>
+								<td>Cena</td>
+								
+							</tr>
+							<tr ng-show = "racun == item.id">
+								<td colspan = 5>
+									<hr/>
+								</td>
+							</tr> 
+							<tr  ng-show = "racun == item.id" ng-repeat = "item1 in picaKliknutePorudzbine">
+								<td>{{item1.pice.naziv}}</td>
+								<td>{{item1.kolicina}}</td>
+								<td>{{item1.pice.cena * item1.kolicina}}</td>
+							</tr>
+							<tr  ng-show = "racun == item.id" ng-repeat = "item1 in jelaKliknutePorudzbine">
+								<td>{{item1.jelo.naziv}}</td>
+								<td>{{item1.kolicina}}</td>
+								<td>{{item1.jelo.cena * item1.kolicina}}</td>
+							</tr>
+							
+							<tr ng-show = "racun == item.id">
+								<td colspan = 5>
+									<hr/>
+								</td>
+							</tr>
+							
+							<tr ng-show = "racun == item.id">
+								<td colspan = 2>Ukupna cena</td>
+								<td>{{ukupnoRacunKliknute}}</td>
+								<td><button ng-click = "zavrsiIKreiraj(item)">Kreiraj i zavrsi</button></td>
+							</tr>
+						</table>
+						
+						
+						<hr/>
+						<table ng-show = "!item.porudzbinaPrihvacena" ng-repeat = "item in porudzbine">
+							<tr >
+								<td style = "width:180px">Oznaka stola : {{item.sto.oznaka}}</td>
+								<td>
+									<button ng-click = "kliknuoNaDetalji(item)">Detalji</button>
+								</td>
+								<td>
+									<button ng-click = "prihvati(item)">Prihvati</button>
+								</td>
+							</tr>
+							<tr  ng-show = "show == item.id" ng-repeat = "item1 in picaKliknutePorudzbine">
+								<td>{{item1.pice.naziv}}</td>
+								<td>{{item1.kolicina}}</td>
+							</tr>
+							<tr  ng-show = "show == item.id" ng-repeat = "item1 in jelaKliknutePorudzbine">
+								<td>{{item1.jelo.naziv}}</td>
+								<td>{{item1.kolicina}}</td>
+							</tr>
+						</table>
+
+
+					</div>				
+				</div>
+			</div>
+
+			<div ng-show="isSet(3)">
+				<div>
+					<h2>Izmenite podatke:</h2>
+					<table>
+						<tr>
+							<td>Ime:</td>
+							<td><input type=text ng-model="imeIzmena"></td>
+						<tr>
+						<tr>
+							<td>Prezime:</td>
+							<td><input type=text ng-model="prezimeIzmena"></td>
+						<tr>
+						<tr>
+							<td>Email:</td>
+							<td><input type=email ng-model="emailIzmena"></td>
+						<tr>
+					</table>
+					<button ng-click="izmeniKonobaraPodaci()">Potvrdi izmene</button>
+				</div>
+			</div>
+			
+			<div ng-show="isSet(4)">
+				<div>
+					<h2>Izmenite lozinku:</h2>
+					<table>
+						<tr>
+							<td>Unesite staru lozinku:</td>
+							<td><input type=password ng-model="staraLozinka"></td>
+						<tr>
+						<tr>
+							<td>Unesite novu lozinku:</td>
+							<td><input type=password ng-model="novaLozinka"></td>
+						<tr>
+						<tr>
+							<td>Potvrdite novu lozinku:</td>
+							<td><input type=password ng-model="novaLozinkaPotvrda"></td>
+						<tr>
+					</table>
+					<button ng-click="izmeniLozinku()">Sacuvaj lozinku</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+

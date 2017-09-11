@@ -1,0 +1,1403 @@
+<div ng-cloak ng-controller="menadzerRestoranaCtrl">
+	<div>
+		<h1>Pozdrav </h1>
+		<a ng-click="logOut()" href="">Izloguj se</a>
+	</div>
+
+	<div>
+		<div>
+			<div id="tabs">
+				<ul>
+					<li ng-class="{active: isSet(0)}"><a ng-click="setTab(0)"
+						href=""><span>Restorana</span></a></li>
+					<li ng-class="{active: isSet(1)}"><a ng-click="setTab(1)"
+						href=""><span>Zaposleni</span></a></li>
+					<li ng-class="{active: isSet(2)}"><a ng-click="setTab(2)"
+						href=""><span>Ponude i ponudjaci</span></a></li>
+					<li ng-class="{active: isSet(3)}"><a ng-click="setTab(3)"
+						href=""><span>Izvestaj poslovanja</span></a></li>
+				</ul>
+			</div>
+
+			<div ng-show="isSet(0)">
+				<h2>Podaci o restoranu</h2>
+				</br>
+				<table border="1px">
+					<tr>
+						<td>Naziv restorana:</td>
+						<td><input type="text" ng-model="restoran.naziv"></td>
+						<td><a ng-click="izmenaNazivaRestorana(restoran)" href="">Izmeni</a></td>
+					</tr>
+					<tr>
+						<td>Opis restorana:</td>
+						<td><input type="text" ng-model="restoran.opis"></td>
+						<td><a ng-click="izmenaOpisaRestorana(restoran)" href="">Izmeni</a></td>
+					</tr>
+				</table><br>
+				
+				<table border="1px">
+					<tr>
+						<th colspan="5">Jelovnik</th>
+					</tr>
+					<tr>
+						<th>Naziv</th>
+						<th>Opis</th>
+						<th>Cena</th>
+						<th></th>
+						<th></th>
+					</tr>
+					<tr ng-repeat="jelo in jela">
+						<td><input type="text" ng-model="jelo.naziv"></td>
+						<td><input type="text" ng-model="jelo.opis"></td>
+						<td><input type="number" min="0" ng-model="jelo.cena"></td>
+						<td><a ng-click="izmenaJela(jelo.id)" href="">Izmeni</a></td>
+						<td><a ng-click="odbrisiJelo(jelo.id)" href="">Obrisi</a></td>
+					</tr>
+				</table><br>
+
+				<table border="1px">
+					<tr>
+						<th colspan="2">Dodaj novo jelo</th>
+					<tr>
+					<tr>
+						<td>Naziv:</td>
+						<td><input type=text ng-model="nazivJela"></td>
+					<tr>
+					<tr>
+						<td>Opis:</td>
+						<td><input type=text ng-model="opisJela"></td>
+					<tr>
+					<tr>
+						<td>Cena:</td>
+						<td><input type="number" min="0" ng-model="cenaJela"></td>
+					<tr>
+					<tr>
+						<td>Tip:</td>
+						<td><select ng-model = "tipJela" ng-options="x for x in tipoviJela"></select></td>
+					<tr>
+				</table>
+				<button ng-click="dodajJelo(restoran)">Dodaj</button></br></br>
+				
+				<table border="1px">
+					<tr>
+						<th colspan="5">Karta pica</th>
+					</tr>
+					<tr>
+						<th>Naziv</th>
+						<th>Opis</th>
+						<th>Cena</th>
+						<th></th>
+						<th></th>
+					</tr>
+					<tr ng-repeat="pice in pica">
+						<td><input type="text" ng-model="pice.naziv"></td>
+						<td><input type="text" ng-model="pice.opis"></td>
+						<td><input type="number" min="0" ng-model="pice.cena"></td>
+						<td><a ng-click="izmenaPice(pice.id)" href="">Izmeni</a></td>
+						<td><a ng-click="odbrisiPice(pice.id)" href="">Obrisi</a></td>
+					</tr>
+				</table><br>
+
+				<table border="1px">
+					<tr>
+						<th colspan="2">Dodaj novo pice</th>
+					<tr>
+					<tr>
+						<td>Naziv:</td>
+						<td><input type=text ng-model="nazivPica"></td>
+					<tr>
+					<tr>
+						<td>Opis:</td>
+						<td><input type=text ng-model="opisPica"></td>
+					<tr>
+					<tr>
+						<td>Cena:</td>
+						<td><input type="number" min="0" ng-model="cenaPica"></td>
+					<tr>
+				</table>
+				<button ng-click="dodajPice(restoran)">Dodaj</button></br></br>
+				
+				
+				
+				<h2>Konfiguracija sedenja: </h2>
+				<table border="1px">
+					<tr>
+						<th colspan="2">Stolovi po redu/koloni</th>
+					</tr>
+					<tr>
+						<td>Broj redova</td>
+						<td><input type="number" min="0" ng-model="brojRedova"></td>
+					</tr>
+					<tr>
+						<td>Broj kolona</td>
+						<td><input type="number" min="0" ng-model="brojKolona"></td>
+					</tr>
+				</table>
+				<button ng-click="napraviKonfiguraciju(restoran)">Kreiraj</button>
+				
+				<div>
+					<h3>Raspored stolova:</h3>
+					<table border="1px">
+						<tr ng-repeat="n1 in brRedova">
+							<td ng-repeat="n2 in brKolona">
+								<button ng-show="obojiStoPrav('nijesto', n1*brojKolona+n2)" style="background-color:white;" style = "width:30px" ng-click="prikaziInformacije(n1*brojKolona+n2, restoran)">{{n1}}-{{n2}}</button>
+								<button ng-show="obojiStoPrav('nepusacki', n1*brojKolona+n2)" style="background-color:red" style = "width:30px" ng-click="prikaziInformacije(n1*brojKolona+n2, restoran)">{{n1}}-{{n2}}</button>
+								<button ng-show="obojiStoPrav('pusacki', n1*brojKolona+n2)" style="background-color:blue" style = "width:30px" ng-click="prikaziInformacije(n1*brojKolona+n2, restoran)">{{n1}}-{{n2}}</button>
+								<button ng-show="obojiStoPrav('unutrasnji', n1*brojKolona+n2)" style="background-color:yellow;" style = "width:30px" ng-click="prikaziInformacije(n1*brojKolona+n2, restoran)">{{n1}}-{{n2}}</button>
+								<button ng-show="obojiStoPrav('bastaOtv', n1*brojKolona+n2)" style="background-color:orange;" style = "width:30px" ng-click="prikaziInformacije(n1*brojKolona+n2, restoran)">{{n1}}-{{n2}}</button>
+								<button ng-show="obojiStoPrav('bastaZat', n1*brojKolona+n2)" style="background-color:green" style = "width:30px" ng-click="prikaziInformacije(n1*brojKolona+n2, restoran)">{{n1}}-{{n2}}</button>
+							</td>
+						</tr>
+					</table>
+					<div ng-show="isVisible(prikaz)" ng-model="prikaz">
+       					<table border="1px">
+       						<tr>
+								<th colspan="2">Sto sa oznakom {{sto.oznaka}}</th>
+							</tr>
+	       					<tr>
+	       						<td>Odaberite segment: </td>
+								<td>
+									<select ng-model="segmentStola">
+										<option value="nijesto">Nije sto</option>
+										<option value="unutrasnji">Unutrasnji deo</option>
+										<option value="nepusacki">Deo za nepusace</option>
+										<option value="pusacki">Deo za pusace</option>
+										<option value="bastaOtv">Basta (otvorena)</option>
+										<option value="bastaZat">Basta (zatvorena)</option>
+									</select>
+								</td>
+							</tr>
+							<tr>
+								<td>Broj mesta: </td>
+								<td><input type="number" ng-model="sto.brojmesta"></td>
+							</tr>
+						</table>
+						<button ng-click="izmeniSto()">Izmeni</button>
+       				</div>
+				</div>
+				<br><br>
+				<div>
+					<table border="1px">
+						<tr>
+							<th colspan="3">Smene</th>
+						</tr>
+						<tr>
+							<th>Od</th>
+							<th>Do</th>
+							<th></th>
+						</tr>
+						<tr ng-repeat="sme in smeneRestorana">
+							<td>{{sme.vremeod}}</td>
+							<td>{{sme.vremedo}}</td>
+							<td><button>Obrisi</button></td>
+						</tr>
+					</table><br>
+					
+					<table border="1px">
+						<tr>
+							<th colspan="2">Dodaj smenu</th>
+						</tr>
+						<tr>
+							<td>Vreme od</td>
+							<td><input type="time" ng-model="vremeSmeneOd"></td>
+						</tr>
+						<tr>
+							<td>Vreme do</td>
+							<td><input type="time" ng-model="vremeSmeneDo"></td>
+						</tr>
+					</table>
+					<button ng-click="dodajSmenu()">Dodaj</button>
+				</div>
+			</div>
+
+			<div ng-show="isSet(1)">
+				 <div><br>
+					<table border="1px">
+						<tr>
+							<th colspan="2">Dodaj radnika</th>
+						<tr>
+						<tr>
+							<td>Radno mesto</td>
+							<td><select ng-model="tipRadnikaDodaj" ng-change="promenaTipa()">
+									<option value="konobar">Konobar</option>
+									<option value="kuvar">Kuvar</option>
+									<option value="sanker">Sanker</option>
+							</select></td>
+						<tr>
+						<tr ng-show="selKuvar()">
+							<td>Tip</td>
+							<td><select ng-model="tipKuvaraDodaj">
+									<option value="ZA_KUVANA_JELA">Kuvana</option>
+									<option value="ZA_PECENA_JELA">Pecena</option>
+									<option value="ZA_SALATE">Salate</option>
+							</select></td>
+						<tr>
+						<tr>
+							<td>Ime</td>
+							<td><input type=text ng-model="imeRadnika"></td>
+						<tr>
+						<tr>
+							<td>Prezime</td>
+							<td><input type=text ng-model="prezimeRadnika"></td>
+						<tr>
+						<tr>
+							<td>Email</td>
+							<td><input type="email" ng-model="emailRadnika"></td>
+						<tr>
+						<tr>
+							<td>Lozinka</td>
+							<td><input type="password" ng-model="lozinkaRadnika"></td>
+						<tr>
+						<tr>
+							<td>Datum rodjenja</td>
+							<td><input type="date" ng-model="datumRadnika"></td>
+						<tr>
+						<tr>
+							<td>Konfekcijski broj</td>
+							<td><input type="number" min="0" ng-model="konfBrRadnika"></td>
+						<tr>
+						<tr>
+							<td>Velicina obuce</td>
+							<td><input type="number" min="0" ng-model="velObRadnika"></td>
+						<tr>
+					</table>
+					<button ng-click="dodajRadnika()">Dodaj</button>
+				</div>
+				
+				<div>
+					<h2>Raspored rada</h2>
+				<table>
+					<tr>
+						<th style = "width:70px">Dan</th>
+						<th style = "width:90px">Datum</th>
+						
+						<th></th>
+					</tr>
+					<tr>
+						<td>Ponedeljak</td>
+						<td>{{datumPonedeljakStr}}</td>
+						<td><button ng-click = "prikaziSmene(1)">Detalji</button></td>
+						<td ng-show = "danasnjiDan == 1">*<td>
+					</tr>
+					<tr ng-show = "prikaziDan == 1">
+						<td>
+							<select ng-model = "tipRadnika" ng-options="x for x in radniciTip" ng-change = "promenjenTip()"></select>
+							<div ng-show="selektovanTip == 'Konobar'">
+								<table>
+									<tr ng-repeat="n1 in brRedova">
+										<td ng-repeat="n2 in brKolona">
+											<button ng-show="obojiSto('nijesto', n1*brojKolona+n2)" disabled="disabled" style = "width:30px; background-color:white" ng-click="prikaziStoloveKonobara(n1*brojKolona+n2)">{{n1}}-{{n2}}</button>
+											<button ng-show="obojiSto('popnunjen', n1*brojKolona+n2)" style="background-color:green" style = "width:30px" ng-click="prikaziStoloveKonobara(n1*brojKolona+n2)">{{n1}}-{{n2}}</button>
+											<button ng-show="obojiSto('nijePopunjen', n1*brojKolona+n2)" style="background-color:red" style = "width:30px" ng-click="prikaziStoloveKonobara(n1*brojKolona+n2)">{{n1}}-{{n2}}</button>
+										</td>
+									</tr>
+								</table>
+								<div ng-show="isVisible(prikaz)">
+			       					<!-- <h2>Sto sa oznakom {{sto.oznaka}}</h2> -->
+			       					<table border="1px">
+				       					<tr>
+											<th>Ime</th>
+											<th>Prezime</th>
+											<th>Email</th>
+											<th>Radi od</th>
+											<th>Radi do</th>
+											<th></th>
+										</tr>
+										<tr ng-repeat="smena in smeneZaKonobare">
+											<td>{{smena.konobar.ime}}</td>
+											<td>{{smena.konobar.prezime}}</td>
+											<td>{{smena.konobar.email}}</td>
+											<td>{{smena.smena.vremeod}}</td>
+											<td>{{smena.smena.vremedo}}</td>
+											<td><button ng-click = "ukloniKonobaraIzSmeneDana(smena)">Ukloni</button></td>
+										</tr>
+									</table>
+			       					<br>
+			       					<!-- Napraviti div koji ce se prikazivati samo ako za taj sto i taj dan nisu popunjene sve smene -->
+			       					<div ng-show="dostupneSmenePon != null">
+				       					<table border="1px">
+				       						<tr>
+												<td>Smena</td>									<!-- Vreme od - do? Kad se skrati... -->
+												<td><select ng-model = "smenaKonobarPon" ng-options="x.vremeod + '-' + x.vremedo for x in dostupneSmenePon" ng-change="promenaSmeneKonobar()"></select></td>
+											</tr>
+											<tr>
+												<td>Dostupni konobari</td>
+												<td><select ng-model = "dostupniKonobariPon" ng-options="x.email for x in dostupniKonPonedeljak"></select></td>
+											</tr>
+										</table>
+										<button ng-click = "dodajKonobaraUSmenuDana()">Dodaj</button>
+									</div>
+			       				</div>
+							</div>
+							<br>
+							
+							<div ng-show="selektovanTip == 'Kuvar'">
+								<table border="1px">
+									<tr>
+										<th>Ime</th>
+										<th>Prezime</th>
+										<th>Email</th>
+										<th>Radi od</th>
+										<th>Radi do</th>
+										<th></th>
+									</tr>
+									<tr ng-repeat="smena in smeneZaKuvare">
+										<td>{{smena.kuvar.ime}}</td>
+										<td>{{smena.kuvar.prezime}}</td>
+										<td>{{smena.kuvar.email}}</td>
+										<td>{{smena.smena.vremeod}}</td>
+										<td>{{smena.smena.vremedo}}</td>
+										<td><button ng-click = "ukloniKuvaraIzSmeneDana(smena)">Ukloni</button></td>
+									</tr>
+								</table>
+								<br>
+								<table border="1px">
+									<tr>
+										<td>Dostupni kuvari</td>
+										<td><select ng-model = "dostupniKuvariPon" ng-options="x.email for x in dostupniKuvPonedeljak"></select></td>
+									</tr>
+									<tr>
+										<td>Smena</td>									<!-- Vreme od - do? Kad se skrati... -->
+										<td><select ng-model = "smenaKuvarPon" ng-options="x.vremeod + '-' + x.vremedo for x in smeneRestorana"></select></td>
+									</tr>
+								</table>
+								<button ng-click = "dodajKuvaraUSmenuDana()">Dodaj</button>
+							</div>
+							<br>
+							
+							<div ng-show="selektovanTip == 'Sanker'">
+								<table border="1px">
+									<tr>
+										<th>Ime</th>
+										<th>Prezime</th>
+										<th>Email</th>
+										<th>Radi od</th>
+										<th>Radi do</th>
+										<th></th>
+									</tr>
+									<tr ng-repeat="smena in smeneZaSankere">
+										<td>{{smena.sanker.ime}}</td>
+										<td>{{smena.sanker.prezime}}</td>
+										<td>{{smena.sanker.email}}</td>
+										<td>{{smena.smena.vremeod}}</td>
+										<td>{{smena.smena.vremedo}}</td>
+										<td><button ng-click = "ukloniSankeraIzSmeneDana(smena)">Ukloni</button></td>
+									</tr>
+								</table>
+								<br>
+								<table border="1px">
+									<tr>
+										<td>Dostupni sankeri</td>
+										<td><select ng-model = "dostupniSankeriPon" ng-options="x.email for x in dostupniSanPonedeljak"></select></td>
+									</tr>
+									<tr>
+										<td>Smena</td>									<!-- Vreme od - do? Kad se skrati... -->
+										<td><select ng-model = "smenaSankerPon" ng-options="x.vremeod + '-' + x.vremedo for x in smeneRestorana"></select></td>
+									</tr>
+								</table>
+								<button ng-click = "dodajSankeraUSmenuDana()">Dodaj</button>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td>Utorak</td>
+						<td>{{datumUtorakStr}}</td>
+						<td><button ng-click = "prikaziSmene(2)">Detalji</button></td>
+						<td ng-show = "danasnjiDan == 2">*<td>
+					</tr>
+					<tr ng-show = "prikaziDan == 2">
+						<td>
+							<select ng-model = "tipRadnika" ng-options="x for x in radniciTip" ng-change = "promenjenTip()"></select>
+							<div ng-show="selektovanTip == 'Konobar'">
+								<table border="1">
+									<tr ng-repeat="n1 in brRedova">
+										<td ng-repeat="n2 in brKolona">
+											<button ng-show="obojiSto('nijesto', n1*brojKolona+n2)" disabled="disabled" style = "width:30px; background-color:white" ng-click="prikaziStoloveKonobara(n1*brojKolona+n2)">{{n1}}-{{n2}}</button>
+											<button ng-show="obojiSto('popnunjen', n1*brojKolona+n2)" style="background-color:green" style = "width:30px" ng-click="prikaziStoloveKonobara(n1*brojKolona+n2)">{{n1}}-{{n2}}</button>
+											<button ng-show="obojiSto('nijePopunjen', n1*brojKolona+n2)" style="background-color:red" style = "width:30px" ng-click="prikaziStoloveKonobara(n1*brojKolona+n2)">{{n1}}-{{n2}}</button>
+										</td>
+									</tr>
+								</table>
+								<div ng-show="isVisible(prikaz)">
+			       					<!-- <h2>Sto sa oznakom {{sto.oznaka}}</h2> -->
+			       					<table border="1px">
+				       					<tr>
+											<th>Ime</th>
+											<th>Prezime</th>
+											<th>Email</th>
+											<th>Radi od</th>
+											<th>Radi do</th>
+											<th></th>
+										</tr>
+										<tr ng-repeat="smena in smeneZaKonobare">
+											<td>{{smena.konobar.ime}}</td>
+											<td>{{smena.konobar.prezime}}</td>
+											<td>{{smena.konobar.email}}</td>
+											<td>{{smena.smena.vremeod}}</td>
+											<td>{{smena.smena.vremedo}}</td>
+											<td><button ng-click = "ukloniKonobaraIzSmeneDana(smena)">Ukloni</button></td>
+										</tr>
+									</table>
+			       					<br>
+			       					<!-- Napraviti div koji ce se prikazivati samo ako za taj sto i taj dan nisu popunjene sve smene -->
+			       					<div ng-show="dostupneSmeneUto != null">
+				       					<table border="1px">
+				       						<tr>
+												<td>Smena</td>									<!-- Vreme od - do? Kad se skrati... -->
+												<td><select ng-model = "smenaKonobarUto" ng-options="x.vremeod + '-' + x.vremedo for x in dostupneSmeneUto" ng-change="promenaSmeneKonobar()"></select></td>
+											</tr>
+											<tr>
+												<td>Dostupni konobari</td>
+												<td><select ng-model = "dostupniKonobariUto" ng-options="x.email for x in dostupniKonUtorak"></select></td>
+											</tr>
+										</table>
+										<button ng-click = "dodajKonobaraUSmenuDana()">Dodaj</button>
+									</div>
+									<div ng-show="dostupneSmeneUto == null"><p>Sve smene su popunjene za ovaj dan!</p></div>
+			       				</div>
+							</div>
+							<br>
+							<div ng-show="selektovanTip == 'Kuvar'">
+								<table border="1px">
+									<tr>
+										<th>Ime</th>
+										<th>Prezime</th>
+										<th>Email</th>
+										<th>Radi od</th>
+										<th>Radi do</th>
+										<th></th>
+									</tr>
+									<tr ng-repeat="smena in smeneZaKuvare">
+										<td>{{smena.kuvar.ime}}</td>
+										<td>{{smena.kuvar.prezime}}</td>
+										<td>{{smena.kuvar.email}}</td>
+										<td>{{smena.smena.vremeod}}</td>
+										<td>{{smena.smena.vremedo}}</td>
+										<td><button ng-click = "ukloniKuvaraIzSmeneDana(smena)">Ukloni</button></td>
+									</tr>
+								</table>
+								<br>
+								<table border="1px">
+									<tr>
+										<td>Dostupni kuvari</td>
+										<td><select ng-model = "dostupniKuvariUto" ng-options="x.email for x in dostupniKuvUtorak"></select></td>
+									</tr>
+									<tr>
+										<td>Smena</td>									<!-- Vreme od - do? Kad se skrati... -->
+										<td><select ng-model = "smenaKuvarUto" ng-options="x.vremeod + '-' + x.vremedo for x in smeneRestorana"></select></td>
+									</tr>
+								</table>
+								<button ng-click = "dodajKuvaraUSmenuDana()">Dodaj</button>
+							</div>
+							<br>
+							<div ng-show="selektovanTip == 'Sanker'">
+								<table border="1px">
+									<tr>
+										<th>Ime</th>
+										<th>Prezime</th>
+										<th>Email</th>
+										<th>Radi od</th>
+										<th>Radi do</th>
+										<th></th>
+									</tr>
+									<tr ng-repeat="smena in smeneZaSankere">
+										<td>{{smena.sanker.ime}}</td>
+										<td>{{smena.sanker.prezime}}</td>
+										<td>{{smena.sanker.email}}</td>
+										<td>{{smena.smena.vremeod}}</td>
+										<td>{{smena.smena.vremedo}}</td>
+										<td><button ng-click = "ukloniSankeraIzSmeneDana(smena)">Ukloni</button></td>
+									</tr>
+								</table>
+								<br>
+								<table border="1px">
+									<tr>
+										<td>Dostupni sankeri</td>
+										<td><select ng-model = "dostupniSankeriUto" ng-options="x.email for x in dostupniSanUtorak"></select></td>
+									</tr>
+									<tr>
+										<td>Smena</td>									<!-- Vreme od - do? Kad se skrati... -->
+										<td><select ng-model = "smenaSankerUto" ng-options="x.vremeod + '-' + x.vremedo for x in smeneRestorana"></select></td>
+									</tr>
+								</table>
+								<button ng-click = "dodajSankeraUSmenuDana()">Dodaj</button>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td>Sreda</td>
+						<td>{{datumSredaStr}}</td>
+						<td><button ng-click = "prikaziSmene(3)">Detalji</button></td>
+						<td ng-show = "danasnjiDan == 3">*<td>
+					</tr>
+					<tr ng-show = "prikaziDan == 3">
+						<td>
+							<select ng-model = "tipRadnika" ng-options="x for x in radniciTip" ng-change = "promenjenTip()"></select>
+							<div ng-show="selektovanTip == 'Konobar'">
+								<table border="1">
+									<tr ng-repeat="n1 in brRedova">
+										<td ng-repeat="n2 in brKolona">
+											<button ng-show="obojiSto('nijesto', n1*brojKolona+n2)" disabled="disabled" style = "width:30px; background-color:white" ng-click="prikaziStoloveKonobara(n1*brojKolona+n2)">{{n1}}-{{n2}}</button>
+											<button ng-show="obojiSto('popnunjen', n1*brojKolona+n2)" style="background-color:green" style = "width:30px" ng-click="prikaziStoloveKonobara(n1*brojKolona+n2)">{{n1}}-{{n2}}</button>
+											<button ng-show="obojiSto('nijePopunjen', n1*brojKolona+n2)" style="background-color:red" style = "width:30px" ng-click="prikaziStoloveKonobara(n1*brojKolona+n2)">{{n1}}-{{n2}}</button>
+										</td>
+									</tr>
+								</table>
+								<div ng-show="isVisible(prikaz)">
+			       					<!-- <h2>Sto sa oznakom {{sto.oznaka}}</h2> -->
+			       					<table border="1px">
+				       					<tr>
+											<th>Ime</th>
+											<th>Prezime</th>
+											<th>Email</th>
+											<th>Radi od</th>
+											<th>Radi do</th>
+											<th></th>
+										</tr>
+										<tr ng-repeat="smena in smeneZaKonobare">
+											<td>{{smena.konobar.ime}}</td>
+											<td>{{smena.konobar.prezime}}</td>
+											<td>{{smena.konobar.email}}</td>
+											<td>{{smena.smena.vremeod}}</td>
+											<td>{{smena.smena.vremedo}}</td>
+											<td><button ng-click = "ukloniKonobaraIzSmeneDana(smena)">Ukloni</button></td>
+										</tr>
+									</table>
+			       					<br>
+			       					<!-- Napraviti div koji ce se prikazivati samo ako za taj sto i taj dan nisu popunjene sve smene -->
+			       					<div ng-show="dostupneSmeneSre != null">
+				       					<table border="1px">
+				       						<tr>
+												<td>Smena</td>									<!-- Vreme od - do? Kad se skrati... -->
+												<td><select ng-model = "smenaKonobarSre" ng-options="x.vremeod + '-' + x.vremedo for x in dostupneSmeneSre" ng-change="promenaSmeneKonobar()"></select></td>
+											</tr>
+											<tr>
+												<td>Dostupni konobari</td>
+												<td><select ng-model = "dostupniKonobariSre" ng-options="x.email for x in dostupniKonSreda"></select></td>
+											</tr>
+										</table>
+										<button ng-click = "dodajKonobaraUSmenuDana()">Dodaj</button>
+									</div>
+									<div ng-show="dostupneSmeneSre == null"><p>Sve smene su popunjene za ovaj dan!</p></div>
+			       				</div>
+							</div>
+							<br>
+							<div ng-show="selektovanTip == 'Kuvar'">
+								<table border="1px">
+									<tr>
+										<th>Ime</th>
+										<th>Prezime</th>
+										<th>Email</th>
+										<th>Radi od</th>
+										<th>Radi do</th>
+										<th></th>
+									</tr>
+									<tr ng-repeat="smena in smeneZaKuvare">
+										<td>{{smena.kuvar.ime}}</td>
+										<td>{{smena.kuvar.prezime}}</td>
+										<td>{{smena.kuvar.email}}</td>
+										<td>{{smena.smena.vremeod}}</td>
+										<td>{{smena.smena.vremedo}}</td>
+										<td><button ng-click = "ukloniKuvaraIzSmeneDana(smena)">Ukloni</button></td>
+									</tr>
+								</table>
+								<br>
+								<table border="1px">
+									<tr>
+										<td>Dostupni kuvari</td>
+										<td><select ng-model = "dostupniKuvariSre" ng-options="x.email for x in dostupniKuvSreda"></select></td>
+									</tr>
+									<tr>
+										<td>Smena</td>									<!-- Vreme od - do? Kad se skrati... -->
+										<td><select ng-model = "smenaKuvarSre" ng-options="x.vremeod + '-' + x.vremedo for x in smeneRestorana"></select></td>
+									</tr>
+								</table>
+								<button ng-click = "dodajKuvaraUSmenuDana()">Dodaj</button>
+							</div>
+							<br>
+							<div ng-show="selektovanTip == 'Sanker'">
+								<table border="1px">
+									<tr>
+										<th>Ime</th>
+										<th>Prezime</th>
+										<th>Email</th>
+										<th>Radi od</th>
+										<th>Radi do</th>
+										<th></th>
+									</tr>
+									<tr ng-repeat="smena in smeneZaSankere">
+										<td>{{smena.sanker.ime}}</td>
+										<td>{{smena.sanker.prezime}}</td>
+										<td>{{smena.sanker.email}}</td>
+										<td>{{smena.smena.vremeod}}</td>
+										<td>{{smena.smena.vremedo}}</td>
+										<td><button ng-click = "ukloniSankeraIzSmeneDana(smena)">Ukloni</button></td>
+									</tr>
+								</table>
+								<br>
+								<table border="1px">
+									<tr>
+										<td>Dostupni sankeri</td>
+										<td><select ng-model = "dostupniSankeriSre" ng-options="x.email for x in dostupniSanSreda"></select></td>
+									</tr>
+									<tr>
+										<td>Smena</td>									<!-- Vreme od - do? Kad se skrati... -->
+										<td><select ng-model = "smenaSankerSre" ng-options="x.vremeod + '-' + x.vremedo for x in smeneRestorana"></select></td>
+									</tr>
+								</table>
+								<button ng-click = "dodajSankeraUSmenuDana()">Dodaj</button>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td>Cetvrtak</td>
+						<td>{{datumCetvrtakStr}}</td>
+						<td><button ng-click = "prikaziSmene(4)">Detalji</button></td>
+						<td ng-show = "danasnjiDan == 4">*<td>
+					</tr>
+					<tr ng-show = "prikaziDan == 4">						
+						<td>
+							<select ng-model = "tipRadnika" ng-options="x for x in radniciTip" ng-change = "promenjenTip()"></select>
+							<div ng-show="selektovanTip == 'Konobar'">
+								<table border="1">
+									<tr ng-repeat="n1 in brRedova">
+										<td ng-repeat="n2 in brKolona">
+											<button ng-show="obojiSto('nijesto', n1*brojKolona+n2)" disabled="disabled" style = "width:30px; background-color:white" ng-click="prikaziStoloveKonobara(n1*brojKolona+n2)">{{n1}}-{{n2}}</button>
+											<button ng-show="obojiSto('popnunjen', n1*brojKolona+n2)" style="background-color:green" style = "width:30px" ng-click="prikaziStoloveKonobara(n1*brojKolona+n2)">{{n1}}-{{n2}}</button>
+											<button ng-show="obojiSto('nijePopunjen', n1*brojKolona+n2)" style="background-color:red" style = "width:30px" ng-click="prikaziStoloveKonobara(n1*brojKolona+n2)">{{n1}}-{{n2}}</button>
+										</td>
+									</tr>
+								</table>
+								<div ng-show="isVisible(prikaz)">
+			       					<!-- <h2>Sto sa oznakom {{sto.oznaka}}</h2> -->
+			       					<table border="1px">
+				       					<tr>
+											<th>Ime</th>
+											<th>Prezime</th>
+											<th>Email</th>
+											<th>Radi od</th>
+											<th>Radi do</th>
+											<th></th>
+										</tr>
+										<tr ng-repeat="smena in smeneZaKonobare">
+											<td>{{smena.konobar.ime}}</td>
+											<td>{{smena.konobar.prezime}}</td>
+											<td>{{smena.konobar.email}}</td>
+											<td>{{smena.smena.vremeod}}</td>
+											<td>{{smena.smena.vremedo}}</td>
+											<td><button ng-click = "ukloniKonobaraIzSmeneDana(smena)">Ukloni</button></td>
+										</tr>
+									</table>
+			       					<br>
+			       					<!-- Napraviti div koji ce se prikazivati samo ako za taj sto i taj dan nisu popunjene sve smene -->
+			       					<div ng-show="dostupneSmeneCet != null">
+				       					<table border="1px">
+				       						<tr>
+												<td>Smena</td>									<!-- Vreme od - do? Kad se skrati... -->
+												<td><select ng-model = "smenaKonobarCet" ng-options="x.vremeod + '-' + x.vremedo for x in dostupneSmeneCet" ng-change="promenaSmeneKonobar()"></select></td>
+											</tr>
+											<tr>
+												<td>Dostupni konobari</td>
+												<td><select ng-model = "dostupniKonobariCet" ng-options="x.email for x in dostupniKonCetvrtak"></select></td>
+											</tr>
+										</table>
+										<button ng-click = "dodajKonobaraUSmenuDana()">Dodaj</button>
+									</div>
+									<div ng-show="dostupneSmeneCet == null"><p>Sve smene su popunjene za ovaj dan!</p></div>
+			       				</div>
+							</div>
+							<br>
+							<div ng-show="selektovanTip == 'Kuvar'">
+								<table border="1px">
+									<tr>
+										<th>Ime</th>
+										<th>Prezime</th>
+										<th>Email</th>
+										<th>Radi od</th>
+										<th>Radi do</th>
+										<th></th>
+									</tr>
+									<tr ng-repeat="smena in smeneZaKuvare">
+										<td>{{smena.kuvar.ime}}</td>
+										<td>{{smena.kuvar.prezime}}</td>
+										<td>{{smena.kuvar.email}}</td>
+										<td>{{smena.smena.vremeod}}</td>
+										<td>{{smena.smena.vremedo}}</td>
+										<td><button ng-click = "ukloniKuvaraIzSmeneDana(smena)">Ukloni</button></td>
+									</tr>
+								</table>
+								<br>
+								<table border="1px">
+									<tr>
+										<td>Dostupni kuvari</td>
+										<td><select ng-model = "dostupniKuvariCet" ng-options="x.email for x in dostupniKuvCetvrtak"></select></td>
+									</tr>
+									<tr>
+										<td>Smena</td>									<!-- Vreme od - do? Kad se skrati... -->
+										<td><select ng-model = "smenaKuvarCet" ng-options="x.vremeod + '-' + x.vremedo for x in smeneRestorana"></select></td>
+									</tr>
+								</table>
+								<button ng-click = "dodajKuvaraUSmenuDana()">Dodaj</button>
+							</div>
+							<br>
+							<div ng-show="selektovanTip == 'Sanker'">
+								<table border="1px">
+									<tr>
+										<th>Ime</th>
+										<th>Prezime</th>
+										<th>Email</th>
+										<th>Radi od</th>
+										<th>Radi do</th>
+										<th></th>
+									</tr>
+									<tr ng-repeat="smena in smeneZaSankere">
+										<td>{{smena.sanker.ime}}</td>
+										<td>{{smena.sanker.prezime}}</td>
+										<td>{{smena.sanker.email}}</td>
+										<td>{{smena.smena.vremeod}}</td>
+										<td>{{smena.smena.vremedo}}</td>
+										<td><button ng-click = "ukloniSankeraIzSmeneDana(smena)">Ukloni</button></td>
+									</tr>
+								</table>
+								<br>
+								<table border="1px">
+									<tr>
+										<td>Dostupni sankeri</td>
+										<td><select ng-model = "dostupniSankeriCet" ng-options="x.email for x in dostupniSanCetvrtak"></select></td>
+									</tr>
+									<tr>
+										<td>Smena</td>									<!-- Vreme od - do? Kad se skrati... -->
+										<td><select ng-model = "smenaSankerCet" ng-options="x.vremeod + '-' + x.vremedo for x in smeneRestorana"></select></td>
+									</tr>
+								</table>
+								<button ng-click = "dodajSankeraUSmenuDana()">Dodaj</button>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td>Petak</td>
+						<td>{{datumPetakStr}}</td>
+						<td><button ng-click = "prikaziSmene(5)">Detalji</button></td>
+						<td ng-show = "danasnjiDan == 5">*<td>
+					</tr>
+					<tr ng-show = "prikaziDan == 5">
+						<td>
+							<select ng-model = "tipRadnika" ng-options="x for x in radniciTip" ng-change = "promenjenTip()"></select>
+							<div ng-show="selektovanTip == 'Konobar'">
+								<table border="1">
+									<tr ng-repeat="n1 in brRedova">
+										<td ng-repeat="n2 in brKolona">
+											<button ng-show="obojiSto('nijesto', n1*brojKolona+n2)" disabled="disabled" style = "width:30px; background-color:white" ng-click="prikaziStoloveKonobara(n1*brojKolona+n2)">{{n1}}-{{n2}}</button>
+											<button ng-show="obojiSto('popnunjen', n1*brojKolona+n2)" style="background-color:green" style = "width:30px" ng-click="prikaziStoloveKonobara(n1*brojKolona+n2)">{{n1}}-{{n2}}</button>
+											<button ng-show="obojiSto('nijePopunjen', n1*brojKolona+n2)" style="background-color:red" style = "width:30px" ng-click="prikaziStoloveKonobara(n1*brojKolona+n2)">{{n1}}-{{n2}}</button>
+										</td>
+									</tr>
+								</table>
+								<div ng-show="isVisible(prikaz)">
+			       					<!-- <h2>Sto sa oznakom {{sto.oznaka}}</h2> -->
+			       					<table border="1px">
+				       					<tr>
+											<th>Ime</th>
+											<th>Prezime</th>
+											<th>Email</th>
+											<th>Radi od</th>
+											<th>Radi do</th>
+											<th></th>
+										</tr>
+										<tr ng-repeat="smena in smeneZaKonobare">
+											<td>{{smena.konobar.ime}}</td>
+											<td>{{smena.konobar.prezime}}</td>
+											<td>{{smena.konobar.email}}</td>
+											<td>{{smena.smena.vremeod}}</td>
+											<td>{{smena.smena.vremedo}}</td>
+											<td><button ng-click = "ukloniKonobaraIzSmeneDana(smena)">Ukloni</button></td>
+										</tr>
+									</table>
+			       					<br>
+			       					<!-- Napraviti div koji ce se prikazivati samo ako za taj sto i taj dan nisu popunjene sve smene -->
+			       					<div ng-show="dostupneSmenePet != null">
+				       					<table border="1px">
+				       						<tr>
+												<td>Smena</td>									<!-- Vreme od - do? Kad se skrati... -->
+												<td><select ng-model = "smenaKonobarPet" ng-options="x.vremeod + '-' + x.vremedo for x in dostupneSmenePet" ng-change="promenaSmeneKonobar()"></select></td>
+											</tr>
+											<tr>
+												<td>Dostupni konobari</td>
+												<td><select ng-model = "dostupniKonobariPet" ng-options="x.email for x in dostupniKonPetak"></select></td>
+											</tr>
+										</table>
+										<button ng-click = "dodajKonobaraUSmenuDana()">Dodaj</button>
+									</div>
+									<div ng-show="dostupneSmenePet == null"><p>Sve smene su popunjene za ovaj dan!</p></div>
+			       				</div>
+							</div>
+							<br>
+							<div ng-show="selektovanTip == 'Kuvar'">
+								<table border="1px">
+									<tr>
+										<th>Ime</th>
+										<th>Prezime</th>
+										<th>Email</th>
+										<th>Radi od</th>
+										<th>Radi do</th>
+										<th></th>
+									</tr>
+									<tr ng-repeat="smena in smeneZaKuvare">
+										<td>{{smena.kuvar.ime}}</td>
+										<td>{{smena.kuvar.prezime}}</td>
+										<td>{{smena.kuvar.email}}</td>
+										<td>{{smena.smena.vremeod}}</td>
+										<td>{{smena.smena.vremedo}}</td>
+										<td><button ng-click = "ukloniKuvaraIzSmeneDana(smena)">Ukloni</button></td>
+									</tr>
+								</table>
+								<br>
+								<table border="1px">
+									<tr>
+										<td>Dostupni kuvari</td>
+										<td><select ng-model = "dostupniKuvariPet" ng-options="x.email for x in dostupniKuvPetak"></select></td>
+									</tr>
+									<tr>
+										<td>Smena</td>									<!-- Vreme od - do? Kad se skrati... -->
+										<td><select ng-model = "smenaKuvarPet" ng-options="x.vremeod + '-' + x.vremedo for x in smeneRestorana"></select></td>
+									</tr>
+								</table>
+								<button ng-click = "dodajKuvaraUSmenuDana()">Dodaj</button>
+							</div>
+							<br>
+							<div ng-show="selektovanTip == 'Sanker'">
+								<table border="1px">
+									<tr>
+										<th>Ime</th>
+										<th>Prezime</th>
+										<th>Email</th>
+										<th>Radi od</th>
+										<th>Radi do</th>
+										<th></th>
+									</tr>
+									<tr ng-repeat="smena in smeneZaSankere">
+										<td>{{smena.sanker.ime}}</td>
+										<td>{{smena.sanker.prezime}}</td>
+										<td>{{smena.sanker.email}}</td>
+										<td>{{smena.smena.vremeod}}</td>
+										<td>{{smena.smena.vremedo}}</td>
+										<td><button ng-click = "ukloniSankeraIzSmeneDana(smena)">Ukloni</button></td>
+									</tr>
+								</table>
+								<br>
+								<table border="1px">
+									<tr>
+										<td>Dostupni sankeri</td>
+										<td><select ng-model = "dostupniSankeriPet" ng-options="x.email for x in dostupniSanPetak"></select></td>
+									</tr>
+									<tr>
+										<td>Smena</td>									<!-- Vreme od - do? Kad se skrati... -->
+										<td><select ng-model = "smenaSankerPet" ng-options="x.vremeod + '-' + x.vremedo for x in smeneRestorana"></select></td>
+									</tr>
+								</table>
+								<button ng-click = "dodajSankeraUSmenuDana()">Dodaj</button>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td>Subota</td>
+						<td>{{datumSubotaStr}}</td>
+						<td><button ng-click = "prikaziSmene(6)">Detalji</button></td>
+						<td ng-show = "danasnjiDan == 6">*<td>
+					</tr>
+					<tr ng-show = "prikaziDan == 6">
+						<td>
+							<select ng-model = "tipRadnika" ng-options="x for x in radniciTip" ng-change = "promenjenTip()"></select>
+							<div ng-show="selektovanTip == 'Konobar'">
+								<table border="1">
+									<tr ng-repeat="n1 in brRedova">
+										<td ng-repeat="n2 in brKolona">
+											<button ng-show="obojiSto('nijesto', n1*brojKolona+n2)" disabled="disabled" style = "width:30px; background-color:white" ng-click="prikaziStoloveKonobara(n1*brojKolona+n2)">{{n1}}-{{n2}}</button>
+											<button ng-show="obojiSto('popnunjen', n1*brojKolona+n2)" style="background-color:green" style = "width:30px" ng-click="prikaziStoloveKonobara(n1*brojKolona+n2)">{{n1}}-{{n2}}</button>
+											<button ng-show="obojiSto('nijePopunjen', n1*brojKolona+n2)" style="background-color:red" style = "width:30px" ng-click="prikaziStoloveKonobara(n1*brojKolona+n2)">{{n1}}-{{n2}}</button>
+										</td>
+									</tr>
+								</table>
+								<div ng-show="isVisible(prikaz)">
+			       					<!-- <h2>Sto sa oznakom {{sto.oznaka}}</h2> -->
+			       					<table border="1px">
+				       					<tr>
+											<th>Ime</th>
+											<th>Prezime</th>
+											<th>Email</th>
+											<th>Radi od</th>
+											<th>Radi do</th>
+											<th></th>
+										</tr>
+										<tr ng-repeat="smena in smeneZaKonobare">
+											<td>{{smena.konobar.ime}}</td>
+											<td>{{smena.konobar.prezime}}</td>
+											<td>{{smena.konobar.email}}</td>
+											<td>{{smena.smena.vremeod}}</td>
+											<td>{{smena.smena.vremedo}}</td>
+											<td><button ng-click = "ukloniKonobaraIzSmeneDana(smena)">Ukloni</button></td>
+										</tr>
+									</table>
+			       					<br>
+			       					<!-- Napraviti div koji ce se prikazivati samo ako za taj sto i taj dan nisu popunjene sve smene -->
+			       					<div ng-show="dostupneSmeneSub != null">
+				       					<table border="1px">
+				       						<tr>
+												<td>Smena</td>									<!-- Vreme od - do? Kad se skrati... -->
+												<td><select ng-model = "smenaKonobarSub" ng-options="x.vremeod + '-' + x.vremedo for x in dostupneSmeneSub" ng-change="promenaSmeneKonobar()"></select></td>
+											</tr>
+											<tr>
+												<td>Dostupni konobari</td>
+												<td><select ng-model = "dostupniKonobariSub" ng-options="x.email for x in dostupniKonSubota"></select></td>
+											</tr>
+										</table>
+										<button ng-click = "dodajKonobaraUSmenuDana()">Dodaj</button>
+									</div>
+									<div ng-show="dostupneSmeneSub == null"><p>Sve smene su popunjene za ovaj dan!</p></div>
+			       				</div>
+							</div>
+							<br>
+							<div ng-show="selektovanTip == 'Kuvar'">
+								<table border="1px">
+									<tr>
+										<th>Ime</th>
+										<th>Prezime</th>
+										<th>Email</th>
+										<th>Radi od</th>
+										<th>Radi do</th>
+										<th></th>
+									</tr>
+									<tr ng-repeat="smena in smeneZaKuvare">
+										<td>{{smena.kuvar.ime}}</td>
+										<td>{{smena.kuvar.prezime}}</td>
+										<td>{{smena.kuvar.email}}</td>
+										<td>{{smena.smena.vremeod}}</td>
+										<td>{{smena.smena.vremedo}}</td>
+										<td><button ng-click = "ukloniKuvaraIzSmeneDana(smena)">Ukloni</button></td>
+									</tr>
+								</table>
+								<br>
+								<table border="1px">
+									<tr>
+										<td>Dostupni kuvari</td>
+										<td><select ng-model = "dostupniKuvariSub" ng-options="x.email for x in dostupniKuvSubota"></select></td>
+									</tr>
+									<tr>
+										<td>Smena</td>									<!-- Vreme od - do? Kad se skrati... -->
+										<td><select ng-model = "smenaKuvarSub" ng-options="x.vremeod + '-' + x.vremedo for x in smeneRestorana"></select></td>
+									</tr>
+								</table>
+								<button ng-click = "dodajKuvaraUSmenuDana()">Dodaj</button>
+							</div>
+							<br>
+							<div ng-show="selektovanTip == 'Sanker'">
+								<table border="1px">
+									<tr>
+										<th>Ime</th>
+										<th>Prezime</th>
+										<th>Email</th>
+										<th>Radi od</th>
+										<th>Radi do</th>
+										<th></th>
+									</tr>
+									<tr ng-repeat="smena in smeneZaSankere">
+										<td>{{smena.sanker.ime}}</td>
+										<td>{{smena.sanker.prezime}}</td>
+										<td>{{smena.sanker.email}}</td>
+										<td>{{smena.smena.vremeod}}</td>
+										<td>{{smena.smena.vremedo}}</td>
+										<td><button ng-click = "ukloniSankeraIzSmeneDana(smena)">Ukloni</button></td>
+									</tr>
+								</table>
+								<br>
+								<table border="1px">
+									<tr>
+										<td>Dostupni sankeri</td>
+										<td><select ng-model = "dostupniSankeriSub" ng-options="x.email for x in dostupniSanSubota"></select></td>
+									</tr>
+									<tr>
+										<td>Smena</td>									<!-- Vreme od - do? Kad se skrati... -->
+										<td><select ng-model = "smenaSankerSub" ng-options="x.vremeod + '-' + x.vremedo for x in smeneRestorana"></select></td>
+									</tr>
+								</table>
+								<button ng-click = "dodajSankeraUSmenuDana()">Dodaj</button>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td>Nedelja</td>
+						<td>{{datumNedeljaStr}}</td>
+						<td><button ng-click = "prikaziSmene(0)">Detalji</button></td>
+						<td ng-show = "danasnjiDan == 0">*<td>
+					</tr>
+					<tr ng-show = "prikaziDan == 0">
+						<td>
+							<select ng-model = "tipRadnika" ng-options="x for x in radniciTip" ng-change = "promenjenTip()"></select>
+							<div ng-show="selektovanTip == 'Konobar'">
+								<table border="1">
+									<tr ng-repeat="n1 in brRedova">
+										<td ng-repeat="n2 in brKolona">
+											<button ng-show="obojiSto('nijesto', n1*brojKolona+n2)" disabled="disabled" style = "width:30px; background-color:white" ng-click="prikaziStoloveKonobara(n1*brojKolona+n2)">{{n1}}-{{n2}}</button>
+											<button ng-show="obojiSto('popnunjen', n1*brojKolona+n2)" style="background-color:green" style = "width:30px" ng-click="prikaziStoloveKonobara(n1*brojKolona+n2)">{{n1}}-{{n2}}</button>
+											<button ng-show="obojiSto('nijePopunjen', n1*brojKolona+n2)" style="background-color:red" style = "width:30px" ng-click="prikaziStoloveKonobara(n1*brojKolona+n2)">{{n1}}-{{n2}}</button>
+										</td>
+									</tr>
+								</table>
+								<div ng-show="isVisible(prikaz)">
+			       					<!-- <h2>Sto sa oznakom {{sto.oznaka}}</h2> -->
+			       					<table border="1px">
+				       					<tr>
+											<th>Ime</th>
+											<th>Prezime</th>
+											<th>Email</th>
+											<th>Radi od</th>
+											<th>Radi do</th>
+											<th></th>
+										</tr>
+										<tr ng-repeat="smena in smeneZaKonobare">
+											<td>{{smena.konobar.ime}}</td>
+											<td>{{smena.konobar.prezime}}</td>
+											<td>{{smena.konobar.email}}</td>
+											<td>{{smena.smena.vremeod}}</td>
+											<td>{{smena.smena.vremedo}}</td>
+											<td><button ng-click = "ukloniKonobaraIzSmeneDana(smena)">Ukloni</button></td>
+										</tr>
+									</table>
+			       					<br>
+			       					<!-- Napraviti div koji ce se prikazivati samo ako za taj sto i taj dan nisu popunjene sve smene -->
+			       					<div ng-show="dostupneSmeneNed != null">
+				       					<table border="1px">
+				       						<tr>
+												<td>Smena</td>									<!-- Vreme od - do? Kad se skrati... -->
+												<td><select ng-model = "smenaKonobarNed" ng-options="x.vremeod + '-' + x.vremedo for x in dostupneSmeneNed" ng-change="promenaSmeneKonobar()"></select></td>
+											</tr>
+											<tr>
+												<td>Dostupni konobari</td>
+												<td><select ng-model = "dostupniKonobariNed" ng-options="x.email for x in dostupniKonNedelja"></select></td>
+											</tr>
+										</table>
+										<button ng-click = "dodajKonobaraUSmenuDana()">Dodaj</button>
+									</div>
+									<div ng-show="dostupneSmeneNed == null"><p>Sve smene su popunjene za ovaj dan!</p></div>
+			       				</div>
+							</div>
+							<br>
+							<div ng-show="selektovanTip == 'Kuvar'">
+								<table border="1px">
+									<tr>
+										<th>Ime</th>
+										<th>Prezime</th>
+										<th>Email</th>
+										<th>Radi od</th>
+										<th>Radi do</th>
+										<th></th>
+									</tr>
+									<tr ng-repeat="smena in smeneZaKuvare">
+										<td>{{smena.kuvar.ime}}</td>
+										<td>{{smena.kuvar.prezime}}</td>
+										<td>{{smena.kuvar.email}}</td>
+										<td>{{smena.smena.vremeod}}</td>
+										<td>{{smena.smena.vremedo}}</td>
+										<td><button ng-click = "ukloniKuvaraIzSmeneDana(smena)">Ukloni</button></td>
+									</tr>
+								</table>
+								<br>
+								<table border="1px">
+									<tr>
+										<td>Dostupni kuvari</td>
+										<td><select ng-model = "dostupniKuvariNed" ng-options="x.email for x in dostupniKuvNedelja"></select></td>
+									</tr>
+									<tr>
+										<td>Smena</td>									<!-- Vreme od - do? Kad se skrati... -->
+										<td><select ng-model = "smenaKuvarNed" ng-options="x.vremeod + '-' + x.vremedo for x in smeneRestorana"></select></td>
+									</tr>
+								</table>
+								<button ng-click = "dodajKuvaraUSmenuDana()">Dodaj</button>
+							</div>
+							<br>
+							<div ng-show="selektovanTip == 'Sanker'">
+								<table border="1px">
+									<tr>
+										<th>Ime</th>
+										<th>Prezime</th>
+										<th>Email</th>
+										<th>Radi od</th>
+										<th>Radi do</th>
+										<th></th>
+									</tr>
+									<tr ng-repeat="smena in smeneZaSankere">
+										<td>{{smena.sanker.ime}}</td>
+										<td>{{smena.sanker.prezime}}</td>
+										<td>{{smena.sanker.email}}</td>
+										<td>{{smena.smena.vremeod}}</td>
+										<td>{{smena.smena.vremedo}}</td>
+										<td><button ng-click = "ukloniSankeraIzSmeneDana(smena)">Ukloni</button></td>
+									</tr>
+								</table>
+								<br>
+								<table border="1px">
+									<tr>
+										<td>Dostupni sankeri</td>
+										<td><select ng-model = "dostupniSankeriNed" ng-options="x.email for x in dostupniSanNedelja"></select></td>
+									</tr>
+									<tr>
+										<td>Smena</td>									<!-- Vreme od - do? Kad se skrati... -->
+										<td><select ng-model = "smenaSankerNed" ng-options="x.vremeod + '-' + x.vremedo for x in smeneRestorana"></select></td>
+									</tr>
+								</table>
+								<button ng-click = "dodajSankeraUSmenuDana()">Dodaj</button>
+							</div>
+						</td>
+					</tr>
+				</table>
+				</div>
+			</div>
+
+			<div ng-show="isSet(2)">
+				<!-- Prikazati sve ponudjace restorana... -->
+				<h2>Dodaj ponudjaca za svoj restoran</h2>
+				<!-- Napraviti pretragu po imenu, prezimenu, emailu -->
+				<table border="2px">
+					<tr>
+						<th>Ime</th>
+						<th>Prezime</th>
+						<th>Email</th>
+						<th></th>
+					</tr>
+					<tr ng-repeat="n1 in moguciPonudjaci">
+						<td>{{n1.ime}}</td>
+						<td>{{n1.prezime}}</td>
+						<td>{{n1.email}}</td>
+						<td><button ng-click="dodajPonudjaca(n1)">Dodaj</button></td>
+					<tr>
+				</table>
+				<table>
+					<tr>
+						<td>Ime:</td>
+						<td><input type=text ng-model="imePonudjaca"></td>
+					<tr>
+					<tr>
+						<td>Prezime:</td>
+						<td><input type=text ng-model="prezimePonudjaca"></td>
+					<tr>
+					<tr>
+						<td>Email:</td>
+						<td><input type=text ng-model="emailPonudjaca"></td>
+					<tr>
+					<tr>
+						<td>Lozinka:</td>
+						<td><input type=text ng-model="lozinkaPonudjaca"></td>
+					<tr>
+				</table>
+				<button ng-click="registrujIDodajPonudjaca()">Registruj i dodaj</button>
+				
+				</br>
+				<h2>Moje ponude:</h2></br>
+				<table>
+					<tr>
+						<td>Prikupljanje aktivno od:</td>
+						<td><input type="date" ng-model="datumOd"></td>
+					<tr>
+					<tr>
+						<td>Prikupljanje aktivno do:</td>
+						<td><input type="date" ng-model="datumDo"></td>
+					<tr>
+				</table>
+				<table>
+					<tr>
+						<th colspan="4">Namirnice </th>
+					</tr>
+					<tr>
+						<td>Postojece </td>
+						<td><select ng-model="namirnicaStavka" ng-options="x.naziv for x in listaNamirnica"></select></td>
+						<td><input type="number" ng-model="kolNamirnica"></td>
+						<td><button ng-click="dodajStavkuNamirnicu()">Dodaj</button></td>
+					<tr>
+					<tr>
+						<td>Novu </td>
+						<td><input type="text" ng-model="novaNamirnicaStavka" ></td>
+						<td><input type="number" ng-model="kolNamirnicaNovo"></td>
+						<td><button ng-click="dodajNovuStavkuNamirnicu()">Dodaj</button></td>
+					<tr>
+					<tr>
+						<th colspan="4"></th>
+					</tr>
+					<tr>
+						<th colspan="4">Pice</th>
+					</tr>
+					<tr>
+						<td>Postojece</td>
+						<td><select ng-model="piceStavka" ng-options="x.naziv for x in listaPica"></select></td>
+						<td><input type="number" ng-model="kolPica"></td>
+						<td><button ng-click="dodajStavkuPice()">Dodaj</button></td>
+					<tr>
+					<tr>
+						<td>Novo</td>
+						<td><input type="text" ng-model="novoPiceStavka"></td>
+						<td><input type="number" ng-model="kolPicaNovo"></td>
+						<td><button ng-click="dodajNovuStavkuPice()">Dodaj</button></td>
+					<tr>
+				</table>
+				<button ng-click="objaviPorudzbinu()">Objavi</button>
+				</br></br>
+				
+				<h2>Lista pristiglih ponuda</h2>
+				
+				<h3>Aktivne porudzbine</h3>
+				<ul>
+				<li ng-repeat="porudz in porudzbineMan"> {{porudz.id}}&nbsp;&nbsp;&nbsp;{{porudz.aktivnoOd}}&nbsp;&nbsp;&nbsp;{{porudz.aktivnoDo}}
+					<button ng-click="prikaziPonudeZa(porudz)">Prikazi ponude</button><br>
+					<div ng-show="daPrikaze(porudz)">
+						<table>
+						 	<tr>
+						 		<th>Ponudjac</th>
+						 		<th>Cena</th>
+						 		<th>Rok isporuke</th>
+						 		<th>Garancija</th>
+						 		<th></th>
+						 	</tr>
+						 	<tr ng-repeat="pon in ponudePorudz">
+						 		<td>{{pon.ponudjac.email}}</td>
+						 		<td>{{pon.cena}}</td>
+						 		<td>{{pon.rokisporuke}}</td>
+						 		<td>{{pon.garancija}}</td>
+						 		<td><button ng-click="prihvatiPonudu(pon)">Prihvati</button></td>
+						 	</tr>
+						</table>
+					</div>
+				</li>
+				</ul>
+
+			</div>
+
+			<div ng-show="isSet(3)">
+				<h2>Izvestaj o poslovanju</h2>
+				<table border="1px">
+					<tr>
+						<th colspan="2">Izvestaj za restoran</th>
+					</tr>
+					<tr>
+						<td><input type="date" ng-model="datumOdOcenaRest" ng-change="izlistajOcenuRestorana()"></td>
+						<td><input type="date" ng-model="datumDoOcenaRest" ng-change="izlistajOcenuRestorana()"></td>
+					</tr>
+					<tr>
+						<td>Ocena</td>
+						<td>{{ocenaRestorana}}</td>
+					</tr>
+					<tr>
+						<td>Prihod</td>
+						<td>{{prihodRestorana}}</td>
+					</tr>
+				</table><br><br>
+				
+				<table border="1px">
+					<tr>
+						<td colspan="4">Izvestaj za jelo</td>
+					</tr>
+					<tr>
+						<td><input placeholder="naziv" type="text" ng-model="nazivJela"></td>
+						<td><input placeholder="od datuma" type="date" ng-model="datumOdOcenaJela"></td>
+						<td><input placeholder="do datuma" type="date" ng-model="datumDoOcenaJela"></td>
+						<td><button ng-click="prikaziIzvestajJelo()">Kreiraj</button></td>
+					</tr>
+				</table>
+				
+				<div ng-show="prikazIzvJela()">
+					<table border="1px">
+						<tr>
+							<td>{{izvestajJelo.jelo.naziv}}</td>
+							<td>{{izvestajJelo.ocena}}</td>
+						</tr>
+					</table>
+				</div>
+				<br>
+				
+				<table border="1px">
+					<tr>
+						<th colspan="3">Izvestaj za konobara</th>
+					</tr>
+					<tr>
+						<td>Period</td>
+						<td><input placeholder="od datuma" type="date" ng-model="datumOdOcenaKonobar"></td>
+						<td><input placeholder="do datuma" type="date" ng-model="datumDoOcenaKonobar"></td>
+					</tr>
+					<tr>
+						<td colspan="2"><input placeholder="email" type="text" ng-model="nazivKonobara"></td>
+						<td><button ng-click="prikaziIzvestajKonobar()">Kreiraj</button></td>
+					</tr>
+					<tr>
+						<td colspan="2">Ocena</td>
+						<td>{{ocenaKonobara}}</td>
+					</tr>
+					<tr>
+						<td colspan="2">Prihod</td>
+						<td>{{prihodKonobara}}</td>
+					</tr>
+				</table>
+				
+				<br>
+				<table border="1px">
+					<tr>
+						<th colspan="3">Graficki prikaz posecenosti</th>
+					</tr>
+					<tr>
+						<td><input placeholder="od datuma" type="date" ng-model="datumOdPosecenost"></td>
+						<td>
+							<select ng-model="naKomNivou">
+								<option value="dnevni">Dnevni</option>
+								<option value="nedeljni">Nedeljni</option>
+							</select>
+						</td>
+						<td><button ng-click="prikaziGrafikPosecenosti()">Kreiraj</button></td>
+					</tr>
+				</table>
+				<div ng-show="prikaNedeljni()">
+					<table>
+						<p>Ponedeljak: </p>
+						<tr style = "width:30px;">
+							<td ng-repeat="n in ponN" style = "width:1px; background-color:blue">
+								<p>Pon: </p><div style = "width:1px; background-color:blue"></div>
+							</td>
+						</tr>
+					</table>
+					<table>
+						<p>Utorak: </p>
+						<tr style = "height:30px;"><td  ng-repeat="n in utoN" style = "width:1px; background-color:blue">
+							<div style = "width:1px; background-color:blue"></div>
+						</td></tr>
+					</table>
+					<table>
+						<p>Sreda: </p>
+						<tr style = "height:30px;"><td ng-repeat="n in sreN" style = "width:1px; background-color:blue">
+							 <div style = "width:1px; background-color:blue"></div>
+						</td></tr>
+					</table>
+					<table>
+						<p>Cetvrtak: </p>
+						<tr style = "height:30px;"><td  ng-repeat="n in cetN" style = "width:1px; background-color:blue">
+							<div style = "width:1px; background-color:blue"></div>
+						</td></tr>
+					</table>
+					<table>
+						<p>Petak: </p>
+						<tr style = "height:30px;"><td  ng-repeat="n in petN" style = "width:1px; background-color:blue">
+							<div style = "width:1px; background-color:blue"></div>
+						</td></tr>
+					</table>
+					<table>
+						<p>Subota: </p>
+						<tr style = "height:30px;"><td  ng-repeat="n in subN" style = "width:1px; background-color:blue">
+							<div style = "width:1px; background-color:blue"></div>
+						</td></tr>
+					</table>
+					<table>
+						<p>Nedelja: </p>
+						<tr style = "height:30px;"><td  ng-repeat="n in nedN" style = "width:1px; background-color:blue">
+							<div style = "width:1px; background-color:blue"></div>
+						</td></tr>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

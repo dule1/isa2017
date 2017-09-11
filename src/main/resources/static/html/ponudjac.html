@@ -1,0 +1,158 @@
+<div ng-cloak ng-controller="ponudjacCtrl">
+	<div>
+		<h1>Pozdrav</h1>
+		<a ng-click="logOut()" href="">Izloguj se</a>
+	</div>
+
+	<div>
+		<div>
+			<div id="tabs">
+				<ul>
+					<li ng-class="{active: isSet(0)}"><a ng-click="setTab(0)"
+						href=""><span>Porudzbine </span></a></li>
+					<li ng-class="{active: isSet(1)}"><a ng-click="setTab(1)"
+						href=""><span>Licni podaci</span></a></li>
+					<li ng-class="{active: isSet(2)}"><a ng-click="setTab(2)"
+						href=""><span>Promena lozinke</span></a></li>
+				</ul>
+			</div>
+
+			<div ng-show="isSet(0)">
+				<h2>Aktivne porudzbine</h2></br>
+				<div>
+					<h3>Niste poslali ponudu:</h3>
+					<ul>
+       					<li ng-repeat="por in porudzbineMen"> {{por.menadzerrestorana.restoran.naziv}}   {{por.aktivnoOd}} {{por.aktivnoDo}} <button ng-click="prikaziDetalje(por)">Detalji</button>
+       					<div ng-show="vidljivosPorudzbine(por.id)" ng-model="por.id">
+       						<h3>Sadrzaj porudzbine:</h3>
+							<table border="1px">
+								<tr>
+									<th>Naziv</th>
+									<th>Kolicina</th>
+								</tr>
+								<tr ng-repeat="stavka in stavke">
+									<td>{{stavka.naziv}}</td> <!-- Proveravati da li je pice ili namirnica, dodati i tip -->
+									<td>{{stavka.kolicina}}</td>
+								<tr>
+							</table>
+							<table>
+								<tr>
+									<td>Cena</td>
+									<td><input type=number ng-model="cena[por.id]"></td>
+								<tr>
+								<tr>
+									<td>Rok isporuke</td>
+									<td><input type=number ng-model="rokIsporuke[por.id]"></td>
+								<tr>
+								<tr>
+									<td>Garancija</td>
+									<td><input type=text ng-model="garancija[por.id]"></td>
+								<tr>
+							</table>
+							<button ng-click="slanjePonude(por)">Posalji ponudu</button>
+       					</div>
+       					</li>
+    				</ul>
+    				<br><br>
+    				<h3>Poslali ste ponudu</h3>
+    				<!--Isto kao i gore, samo popuniti inpute... -->
+    				<ul>
+       					<li ng-repeat="pon in ponudePonudjaca"> {{pon.porudzbinamenadzer.menadzerrestorana.restoran.naziv}}   {{pon.porudzbinamenadzer.aktivnoOd}} {{pon.porudzbinamenadzer.aktivnoDo}} <button ng-click="prikaziDetaljePon(pon.porudzbinamenadzer)">Detalji</button>
+       					<div ng-show="vidljivosPorudzbinePon(pon.porudzbinamenadzer.id)" ng-model="pon.porudzbinamenadzer.id">
+       						<h3>Sadrzaj porudzbine:</h3>
+							<table border="1px">
+								<tr>
+									<th>Naziv</th>
+									<th>Kolicina</th>
+								</tr>
+								<tr ng-repeat="stavka in stavkePon">
+									<td>{{stavka.naziv}}</td> <!-- Proveravati da li je pice ili namirnica, dodati i tip -->
+									<td>{{stavka.kolicina}}</td>
+								<tr>
+							</table>
+							<table>
+								<tr>
+									<td>Cena</td>
+									<td><input type=number ng-model="pon.cena"></td>
+								<tr>
+								<tr>
+									<td>Rok isporuke</td>
+									<td><input type=number ng-model="pon.rokisporuke"></td>
+								<tr>
+								<tr>
+									<td>Garancija</td>
+									<td><input type=text ng-model="pon.garancija"></td>
+								<tr>
+							</table>
+							<button ng-click="izmenaPonude(pon)">Izmeni ponudu</button>
+       					</div>
+       					</li>
+    				</ul>
+				</div>
+			</div>
+			
+			<div ng-show="isSet(1)">
+				<div>
+					<h2>Izmenite podatke:</h2>
+					<table>
+						<tr>
+							<td>Ime:</td>
+							<td><input type=text ng-model="imeIzmena"></td>
+						<tr>
+						<tr>
+							<td>Prezime:</td>
+							<td><input type=text ng-model="prezimeIzmena"></td>
+						<tr>
+						<tr>
+							<td>Email:</td>
+							<td><input type=text ng-model="emailIzmena"></td>
+						<tr>
+					</table>
+					<button ng-click="izmeniPonudjaca()">Potvrdi izmene</button>
+					<button ng-click="izlistajPonude()">Izlistaj</button>
+					
+				</div>
+
+				<div>
+					<h2>Izmenite lozinku:</h2>
+					<table>
+						<tr>
+							<td>Unesite staru lozinku:</td>
+							<td><input type="password" ng-model="staraLozinka"></td>
+						<tr>
+						<tr>
+							<td>Unesite novu lozinku:</td>
+							<td><input type=text ng-model="novaLozinka"></td>
+						<tr>
+						<tr>
+							<td>Potvrdite novu lozinku:</td>
+							<td><input type=text ng-model="novaLozinkaPotvrda"></td>
+						<tr>
+					</table>
+					<button ng-click="izmeniPonudjaca()">Sacuvaj lozinku</button>
+				</div>
+			</div>
+		
+			<div ng-show="isSet(2)">
+				<div>
+					<h2>Izmenite lozinku:</h2>
+					<table>
+						<tr>
+							<td>Unesite staru lozinku:</td>
+							<td><input type=password ng-model="staraLozinka"></td>
+						<tr>
+						<tr>
+							<td>Unesite novu lozinku:</td>
+							<td><input type=password ng-model="novaLozinka"></td>
+						<tr>
+						<tr>
+							<td>Potvrdite novu lozinku:</td>
+							<td><input type=password ng-model="novaLozinkaPotvrda"></td>
+						<tr>
+					</table>
+					<button ng-click="izmeniLozinku()">Sacuvaj lozinku</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

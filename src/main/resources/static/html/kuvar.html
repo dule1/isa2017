@@ -1,0 +1,175 @@
+<div ng-cloak ng-controller="kuvarCtrl">
+	<div>
+		<h1>Kuvar {{ulogovanKuvar.ime}}</h1>
+		<a ng-click="logOut()" href="">Izloguj se</a>
+	</div>
+
+	<div>
+		<div>
+			<div id="tabs">
+				<ul>
+					<li ng-class="{active: isSet(0)}"><a ng-click="setTab(0)" href=""><span>Raspored rada </span></a></li>
+					<li ng-class="{active: isSet(1)}"><a ng-click="setTab(1)" href=""><span>Lista porudzbina</span></a></li>
+					<li ng-class="{active: isSet(2)}"><a ng-click="setTab(2)" href=""><span>Izmeni podatke</span></a></li>
+					<li ng-class="{active: isSet(3)}"><a ng-click="setTab(3)" href=""><span>Promeni lozinku</span></a></li>
+				</ul>
+			</div>
+
+			<div ng-show="isSet(0)">
+				<h2>Raspored rada</h2>
+				<table>
+					<tr>
+						<td>
+							Odaberi kuvara:
+						</td>
+						<td>
+							<select ng-model = "selektovaniKuvar" ng-options = "x.ime for x in kuvariRestorana" ng-change = "promenjenKuvar()"></select>
+						</td>
+						
+					</tr>
+				</table>
+				
+				<table ng-show = "selektovaniKuvar != null" >
+					<tr>
+						<th style = "width:70px">Dan</th>
+						<th style = "width:90px">Datum</th>
+						<th>Smena</th>
+						<th></th>
+					</tr>
+					<tr>
+						<td>Ponedeljak</td>
+						<td>{{datumPonedeljakStr}}</td>
+						<td ng-show = "ponedeljakKuvara != null">{{ponedeljakKuvara.vremeod}} - {{ponedeljakKuvara.vremedo}} </td>
+						<td ng-show = "ponedeljakKuvara == null">Ne radi</td>
+						<td ng-show = "danasnjiDan == 1">*<td>
+					</tr>
+					<tr>
+						<td>Utorak</td>
+						<td>{{datumUtorakStr}}</td>
+						<td ng-show = "utorakKuvara != null">{{utorakKuvara.vremeod}} - {{utorakKuvara.vremedo}} </td>
+						<td ng-show = "utorakKuvara == null">Ne radi</td>
+						<td ng-show = "danasnjiDan == 2">*<td>
+					</tr>
+					<tr>
+						<td>Sreda</td>
+						<td>{{datumSredaStr}}</td>
+						<td ng-show = "sredaKuvara != null">{{sredaKuvara.vremeod}} - {{sredaKuvara.vremedo}} </td>
+						<td ng-show = "sredaKuvara == null">Ne radi</td>
+						<td ng-show = "danasnjiDan == 3">*<td>
+					</tr>
+					<tr>
+						<td>Cetvrtak</td>
+						<td>{{datumCetvrtakStr}}</td>
+						<td ng-show = "cetvrtakKuvara != null">{{cetvrtakKuvara.vremeod}} - {{cetvrtakKuvara.vremedo}} </td>
+						<td ng-show = "cetvrtakKuvara == null">Ne radi</td>
+						<td ng-show = "danasnjiDan == 4">*<td>
+					</tr>
+					<tr>
+						<td>Petak</td>
+						<td>{{datumPetakStr}}</td>
+						<td ng-show = "petakKuvara != null">{{petakKuvara.vremeod}} - {{petakKuvara.vremedo}} </td>
+						<td ng-show = "petakKuvara == null">Ne radi</td>
+						<td ng-show = "danasnjiDan == 5">*<td>
+					</tr>
+					<tr>
+						<td>Subota</td>
+						<td>{{datumSubotaStr}}</td>
+						<td ng-show = "subotaKuvara != null">{{subotaKuvara.vremeod}} - {{subotaKuvara.vremedo}} </td>
+						<td ng-show = "subotaKuvara == null">Ne radi</td>
+						<td ng-show = "danasnjiDan == 6">*<td>
+					</tr>
+					<tr>
+						<td>Nedelja</td>
+						<td>{{datumNedeljaStr}}</td>
+						<td ng-show = "nedeljaKuvara != null">{{nedeljaKuvara.vremeod}} - {{nedeljaKuvara.vremedo}} </td>
+						<td ng-show = "nedeljaKuvara == null">Ne radi</td>
+						<td ng-show = "danasnjiDan == 0">*<td>
+					</tr>
+				</table>
+			</div>
+
+
+			<div ng-show="isSet(1)">
+				<table ng-show = "!item.spremnaJela" ng-repeat = "item in porudzbine">
+				
+				
+				<table ng-repeat = "item in klasifikovanePorudzbine.mogucePorudzbine">
+				<h2>Lista mogucih porudzbina</h2>
+					<tr >
+						<td>Vreme : {{item.vremePrimanja}}</td>
+						<td>Oznaka stola : {{item.sto.oznaka}}</td>
+						<td><button ng-click = "kliknuoNaDetaljiMoguce(item)">Detalji</button></td>
+						<td><button ng-click = "prihvati(item)">Prihvati</button></td>
+					</tr>
+					<tr  ng-show = "showMoguce == item.id" ng-repeat = "item1 in picaKliknuteMogucePorudzbine">
+						<td>{{item1.jelo.naziv}}</td>
+						<td>{{item1.kolicina}}</td>
+					</tr>
+					<hr/>
+				</table>
+				
+				<table ng-repeat = "item in klasifikovanePorudzbine.prihvacenePorudzbine">
+				<h2>Lista prihvacenih porudzbina</h2>
+					<tr >
+						<td>Vreme : {{item.vremePrimanja}}</td>
+						<td>Oznaka stola : {{item.sto.oznaka}}</td>
+						<td><button ng-click = "kliknuoNaDetaljiPrihvacene(item)">Detalji</td>
+						<td><button ng-click = "zavrsi(item)">Zavrsi</td>
+					</tr>
+					<tr  ng-show = "showPrihvacene == item.id" ng-repeat = "item1 in picaKliknutePrihvacenePorudzbine">
+						<td>{{item1.jelo.naziv}}</td>
+						<td>{{item1.kolicina}}</td>
+					</tr>
+					<hr/>
+				</table>
+				
+				
+			</div>
+
+
+			<div ng-show="isSet(2)">
+				<div>
+					<h2>Izmenite podatke:</h2>
+					<table>
+						<tr>
+							<td>Ime:</td>
+							<td><input type=text ng-model="imeIzmena"></td>
+						<tr>
+						<tr>
+							<td>Prezime:</td>
+							<td><input type=text ng-model="prezimeIzmena"></td>
+						<tr>
+						<tr>
+							<td>Email:</td>
+							<td><input type=email ng-model="emailIzmena"></td>
+						<tr>
+					</table>
+					<button ng-click="izmeniKuvaraPodaci()">Potvrdi izmene</button>
+				</div>
+			</div>
+			
+			<div ng-show="isSet(3)">
+				<div>
+					<h2>Izmenite lozinku:</h2>
+					<table>
+						<tr>
+							<td>Unesite staru lozinku:</td>
+							<td><input type=password ng-model="staraLozinka"></td>
+						<tr>
+						<tr>
+							<td>Unesite novu lozinku:</td>
+							<td><input type=password ng-model="novaLozinka"></td>
+						<tr>
+						<tr>
+							<td>Potvrdite novu lozinku:</td>
+							<td><input type=password ng-model="novaLozinkaPotvrda"></td>
+						<tr>
+					</table>
+					<button ng-click="izmeniLozinku()">Sacuvaj lozinku</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+</div>
+

@@ -1,0 +1,38 @@
+
+
+<div  ng-cloak ng-controller = "registrovanjeCtrl">
+
+			<div >
+				<h2>Unesite podatke o korisniku:</h2>
+				<table>
+
+					
+					<tr>
+						<td> Ime:	</td>
+						<td><input type = text ng-model = "ime"></td>
+					<tr>
+					
+					<tr>
+						<td> Prezime:	</td>
+						<td><input type = text ng-model = "prezime"></td>
+					<tr>
+					<tr>
+						<td> Email:	</td>
+						<td><input type = text ng-model = "email"></td>
+					<tr>
+					
+					<tr>
+						<td> Sifra:	</td>
+						<td><input type = text ng-model = "sifra"></td>
+					<tr>
+
+					<tr>
+						<td> Potvrdite sifru:	</td>
+						<td><input type = text ng-model = "gostSifraPotvrda"></td>
+					<tr>					
+				</table>
+				<button  ng-click="registrovanje()">Registruj se </button>
+			</div>
+
+
+</div>

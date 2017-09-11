@@ -1,0 +1,310 @@
+<div  ng-cloak ng-controller = "gostCtrl">
+
+	<div>
+		<h1>Pozdrav {{ulogovanGost.ime}} </h1>
+		<a ng-click="logOut()" href="">Izloguj se</a>
+	</div>
+
+	<div>
+		<div>
+			<div id="tabs">
+				<ul>
+					<li ng-class="{active: isSet(0)}"><a ng-click="setTab(0)"
+						href=""><span>Istorija poseta</span></a></li>
+					<li ng-class="{active: isSet(1)}"><a ng-click="setTab(1)"
+						href=""><span>Rezervisi restoran</span></a></li>
+					<li ng-class="{active: isSet(2)}"><a ng-click="setTab(2)"
+						href=""><span>Licni podaci </span></a></li>
+					<li ng-class="{active: isSet(3)}"><a ng-click="setTab(3)"
+						href=""><span>Prijatelji</span></a></li>
+				</ul>
+			</div>
+			
+			<div ng-show="isSet(0)">
+				<h2>Istorija poseta restoranima.</h2>
+				<table ng-repeat = "item in poseteGosta">
+					<tr>
+						<td style = "width:240px; heigth: 70px">Restoran : {{item.restoran.naziv}}</td>
+						<td style = "width:240px; heigth: 70px">Termin : {{item.termin}}</td>
+						<td style = "width:120px; heigth: 70px">Trajanje : {{item.brSati}}h</td>
+						<td><button ng-click = "kliknuoOceni(item)">Oceni</button></td>
+						
+					</tr>
+					<tr ng-show = "show == item.id">
+						<td>
+							 <label><input type="radio" ng-model = "ocena" value = 1>1</label>
+							 <label><input type="radio" ng-model = "ocena" value = 2>2</label>
+							 <label><input type="radio" ng-model = "ocena" value = 3>3</label>
+							 <label><input type="radio" ng-model = "ocena" value = 4>4</label>
+							 <label><input type="radio" ng-model = "ocena" value = 5>5</label>
+							
+						</td>
+						<td ng-show = 'item.ocena == -1'>
+							<button ng-click = potvrdiOcenu(ocena)>Potvrdi ocenu restorana</button>
+						</td>
+						<td ng-show = 'item.ocena != -1'>
+							<button ng-click = potvrdiOcenu(ocena)>Promeni ocenu restorana</button>
+						</td>
+						<td ng-show = 'item.ocena != -1'>
+							Ocenili ste sa {{item.ocena}}
+						</td>
+					</tr>
+					
+					<tr ng-show = "show == item.id">
+						<td>
+							 <label><input type="radio" ng-model = "ocena1" value = 1>1</label>
+							 <label><input type="radio" ng-model = "ocena1" value = 2>2</label>
+							 <label><input type="radio" ng-model = "ocena1" value = 3>3</label>
+							 <label><input type="radio" ng-model = "ocena1" value = 4>4</label>
+							 <label><input type="radio" ng-model = "ocena1" value = 5>5</label>
+							
+						</td>
+						<td ng-show = 'item.ocenaUsluge == -1'>
+							<button ng-click = potvrdiOcenuUsluge(ocena1)>Potvrdi ocenu usluge</button>
+						</td>
+						<td ng-show = 'item.ocenaUsluge != -1'>
+							<button ng-click = potvrdiOcenuUsluge(ocena1)>Promeni ocenu usluge</button>
+						</td>
+						<td ng-show = 'item.ocenaUsluge != -1'>
+							Ocenili ste sa {{item.ocenaUsluge}}
+						</td>
+					</tr>
+					
+					
+					
+					<tr ng-show = "show == item.id">
+						<td>
+							 <label><input type="radio" ng-model = "ocena2" value = 1>1</label>
+							 <label><input type="radio" ng-model = "ocena2" value = 2>2</label>
+							 <label><input type="radio" ng-model = "ocena2" value = 3>3</label>
+							 <label><input type="radio" ng-model = "ocena2" value = 4>4</label>
+							 <label><input type="radio" ng-model = "ocena2" value = 5>5</label>
+							
+						</td>
+						<td ng-show = 'item.ocenaObroka == -1'>
+							<button ng-click = potvrdiOcenuObroka(ocena2)>Potvrdi ocenu obroka</button>
+						</td>
+						<td ng-show = 'item.ocenaObroka != -1'>
+							<button ng-click = potvrdiOcenuObroka(ocena2)>Promeni ocenu obroka</button>
+						</td>
+						<td ng-show = 'item.ocenaObroka != -1'>
+							Ocenili ste sa {{item.ocenaObroka}}
+						</td>
+					</tr>
+					
+				</table>
+				
+			</div>
+			
+			<div ng-show="isSet(1)">
+				<h2>Rezervacija restorana.</h2>
+				
+				<div ng-show="isKorak(0)">
+					
+					<table>
+						<td>Odaberite datum i vreme dolaska: <input ng-model="datumVremeRezervacije" type="datetime-local"/></td>
+						<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+						<td>Koliko sati ostajete u restoranu? <input ng-model="brojSatiBoravka" type="number"  min="1"/></td>
+					</table>
+					
+					<table>
+						<tr>
+							<td><p>Pretraga: </p></td>
+							<td><input type="text" name="pretragaRest" ng-model="inputPretragaRest" ng-change="pretraziRestorane()"/></td>
+						</tr>
+					</table>
+					
+				<table id="myRest">
+					<tr ng-show="restorani.length > 0">
+						<th ng-click="sortTableRest(0)">Naziv</th>
+    					<th ng-click="sortTableRest(1)">Vrsta</th>
+    					<th ng-click="sortTableRest()">Udaljenost</th>
+					</tr>
+					<div>
+					<tr ng-repeat="rest in restorani">
+						<td>{{rest.naziv}} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+						<td>{{rest.opis}} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+						<td>200m &nbsp;&nbsp;&nbsp;&nbsp;</td>
+						<td> <button ng-click="odaberiRestoran(rest)">Rezervisi</button></td>
+						
+					</tr>
+				</table>
+					
+				</hr>
+		
+				</div>
+			
+				<div ng-show="isKorak(1)">
+					
+							<table border="1">
+								<tr ng-repeat="n1 in brRedova">
+									<td ng-repeat="n2 in brKolona">
+										<!-- <button ng-click="prikaziInformacije(n1*brojKolona+n2, odabranRestoran)">{{n1}}-{{n2}}</button> -->
+										<button ng-show="obojiStoPrav('nijesto', n1*brojKolona+n2)" style="background-color:white;" style = "width:30px" ng-click="prikaziInformacije(n1*brojKolona+n2, odabranRestoran)">{{n1}}-{{n2}}</button>
+										<button ng-show="obojiStoPrav('nepusacki', n1*brojKolona+n2)" style="background-color:red" style = "width:30px" ng-click="prikaziInformacije(n1*brojKolona+n2, odabranRestoran)">{{n1}}-{{n2}}</button>
+										<!-- <button ng-show="obojiStoPrav('pusacki', n1*brojKolona+n2)" style="background-color:blue" style = "width:30px" ng-click="prikaziInformacije(n1*brojKolona+n2, odabranRestoran">{{n1}}-{{n2}}</button> -->
+									</td>
+								</tr>
+							</table>
+							<div ng-show="isVisible()">
+							<table>
+								<td ng-repeat="odbSto in odabraniStolovi">
+		       						{{odbSto.oznaka}}
+								</td>
+		       				</table>
+		       					<table>
+		       					<tr>
+		       					<td><button ng-click="potvrdiSto(aa)">Potvrdi sto</button></td>
+		       					</tr>
+		       					<tr>
+		       					<td><button ng-click="korakDva()">Dalje</button></td>
+		       					</tr>
+		       					</table>
+		       				</div>
+				</div>
+				
+				<div ng-show="isKorak(2)">
+					
+					<table>
+		       			<tr>
+		       				<table>
+		       					<tr ng-repeat="prij in prijateljiNeprijatelji">
+									<td>{{prij.ime}}</td>
+									<td>{{prij.prezime}}</td>
+									<td>{{prij.email}}</td>
+												
+									<td><select ng-model="odabraniStoOznaka" ng-options="odbSto.oznaka for odbSto in odabraniStolovi">
+										</select></td>
+									<td> <a ng-click="pozovi(prij, odabraniStoOznaka)" href="">Pozovi</a></td>
+								</tr>
+							</table>
+		       			</tr>
+		       			<button ng-click="rezervisiRestoran()">Rezervisi</button>
+		       		</table>
+		       					
+				</div>
+				
+				
+			</div>
+
+			<div ng-show="isSet(2)">
+				<div>
+					<h2>Izmenite podatke:</h2>
+					<table>
+						<tr>
+							<td>Ime:</td>
+							<td><input type=text ng-model="imeIzmena"></td>
+						<tr>
+						<tr>
+							<td>Prezime:</td>
+							<td><input type=text ng-model="prezimeIzmena"></td>
+						<tr>
+						<tr>
+							<td>Email:</td>
+							<td><input readonly type=text ng-model="emailIzmena"></td>
+						<tr>
+					</table>
+					<button ng-click="izmeniGostaPodaci()">Potvrdi izmene</button>
+				</div>
+
+				<div>
+					<h2>Izmenite lozinku:</h2>
+					<table>
+						<tr>
+							<td>Unesite staru lozinku:</td>
+							<td><input type=password ng-model="staraLozinka"></td>
+						<tr>
+						<tr>
+							<td>Unesite novu lozinku:</td>
+							<td><input type=password ng-model="novaLozinka"></td>
+						<tr>
+						<tr>
+							<td>Potvrdite novu lozinku:</td>
+							<td><input type=password ng-model="novaLozinkaPotvrda"></td>
+						<tr>
+					</table>
+					<button ng-click="izmeniGostaSifra()">Sacuvaj lozinku</button>
+				</div>
+
+			</div>
+
+			<div ng-show="isSet(3)">
+				<h2>Zahtevi za prijateljstvo:</h2>
+				<table id="myZahtevi">
+					<tr ng-show="zahteviZaPrijateljstvo.length > 0">
+						<th ng-click="sortTableZah(0)">Ime</th>
+    					<th ng-click="sortTableZah(1)">Prezime</th>
+					</tr>
+					<tr ng-repeat="prij in zahteviZaPrijateljstvo">
+						<td>{{prij.ime}}</td>
+						<td>{{prij.prezime}}</td>
+						<td> <a ng-click="prihvatiZahtev(prij)" href="">Prihvati</a> <a ng-click="odbijZahtev(prij)" href=""> Odbij</a> </td>
+					</tr>
+				</table>
+				<!-- <ul>
+				<li ng-repeat="prij in zahteviZaPrijateljstvo"> {{prij.ime}} {{prij.prezime}} <a ng-click="prihvatiZahtev(prij)" href="">Prihvati</a> <a ng-click="odbijZahtev(prij)" href=""> Odbij</a> </li>
+				</ul> -->
+				<hr>
+				<h2>Spisak prijatelja:</h2>
+				<table>
+					<tr>
+						<td><p>Unesite ime:</p></td>
+						<td><input type="text" name="searchRealIme" ng-model="searchRealFriendIme" ng-change="pretraziPravePrijatelje()"/></td>
+						<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+						<td><p>Unesite prezime:</p></td>
+						<td><input type="text" name="searchRealPrz" ng-model="searchRealFriendPrz" ng-change="pretraziPravePrijatelje()"/></td>
+					</tr>
+				</table>
+				<table id="myPrijatelji">
+					<tr ng-show="prijateljiNeprijatelji.length > 0">
+						<th ng-click="sortTablePr(0)">Ime</th>
+    					<th ng-click="sortTablePr(1)">Prezime</th>
+					</tr>
+					<tr ng-repeat="prij in prijateljiNeprijatelji">
+						<td>{{prij.ime}}</td>
+						<td>{{prij.prezime}}</td>
+						<td> <a ng-click="ukloniPrijatelja(prij)" href="">Ukloni</a></td>
+					</tr>
+				</table>
+				<!-- <ul>
+				<li ng-repeat="prij in prijateljiNeprijatelji"> {{prij.ime}} {{prij.prezime}} <a ng-click="ukloniPrijatelja(prij)" href="">Ukloni</a> </li>
+				</ul> -->
+				<hr>
+				<h2>Dodaj nove prijatelje:</h2> 
+				<table>
+					<tr>
+						<td><p>Unesite ime:</p></td>
+						<td><input type="text" name="searchIme" ng-model="searchFriendIme" ng-change="pretraziPrijatelje()"/></td>
+						<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+						<td><p>Unesite prezime:</p></td>
+						<td><input type="text" name="searchPrz" ng-model="searchFriendPrz" ng-change="pretraziPrijatelje()"/></td>
+					</tr>
+				</table>
+				<table id="myNeprijatelji">
+					<tr ng-show="filtriraniPrijatelji.length > 0">
+						<th ng-click="sortTableNpr(0)">Ime</th>
+    					<th ng-click="sortTableNpr(1)">Prezime</th>
+					</tr>
+					<tr ng-repeat="prij in filtriraniPrijatelji">
+						<td>{{prij.ime}}</td>
+						<td>{{prij.prezime}}</td>
+						<td> <a ng-show="prij.canSend" ng-click="dodajPrijatelja(prij)" href="">Dodaj</a> <a ng-show="prij.canDecline" ng-click="otkaziZahtev(prij)" href="">Otkazi</a> 
+							 <a ng-show="prij.canAccept" ng-click="prihvatiZahtev(prij)" href="">Prihvati</a> <a ng-show="prij.canAccept" ng-click="odbijZahtev(prij)" href=""> Odbij</a> 
+						</td>
+					</tr>
+				</table>
+				<!--<ul>
+				<li ng-repeat="prij in filtriraniPrijatelji"> {{prij.ime}} {{prij.prezime}} <a ng-click="dodajPrijatelja(prij)" href="">Dodaj</a> </li>
+				</ul> -->
+			</div>
+
+
+		</div>
+
+	</div>
+
+	</div>
+
+</div>
+
+
